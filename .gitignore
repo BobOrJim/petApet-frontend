@@ -12,3 +12,12 @@ frontend/web-build/
 
 # macOS
 frontend/.DS_Store
+
+backend/API/bin/
+backend/API/obj/
+backend/Core/bin/
+backend/Core/obj/
+backend/Infrastructure/bin/
+backend/Infrastructure/bin/
+
+
