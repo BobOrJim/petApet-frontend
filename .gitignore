@@ -13,11 +13,11 @@ frontend/web-build/
 # macOS
 frontend/.DS_Store
 
-backend/API/bin/
-backend/API/obj/
-backend/Core/bin/
-backend/Core/obj/
-backend/Infrastructure/bin/
-backend/Infrastructure/bin/
+backend/src/API/bin/
+backend/src/API/obj/
+backend/src/Core/bin/
+backend/src/Core/obj/
+backend/src/Infrastructure/bin/
+backend/src/Infrastructure/bin/
 
 
