@@ -9,5 +9,6 @@ export interface Advert {
     grade: number;
     review: string;
     imageUrls: string;
+    userId: string;
 }
-export interface AdvertDto extends Omit<Advert, 'id' | "review" | "grade"> {};
+export interface AdvertDto extends Omit<Advert, "id" | "review" | "grade"> {};
