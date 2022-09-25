@@ -1,13 +1,13 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
-// import { useUser } from "./UserContext";
 
 interface ContextValue {
   adverts: Advert[];
+  getAllAdverts: () => void;
   getAdvertById:(id: string) => Promise<Advert>;
-//   addAdvert: (advert: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
-//   removeAdvert: (id: string) => void; // boolean på dessa? kommer dock bli ett promise
-//   replaceAdvert: (product: Advert) => void; // boolean på dessa? kommer dock bli ett promise
+  addAdvert: (advert: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
+  removeAdvert: (id: string) => void; // boolean på dessa? kommer dock bli ett promise
+  replaceAdvert: (id: string, product: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
 }
 
 const AdvertContext = createContext<ContextValue>({} as ContextValue)
@@ -18,7 +18,6 @@ interface Props {
 
 export default function AdvertProvider({ children }: Props) {
     const [adverts, setAdverts] = useState<Advert[]>([]);
-    // const { user } = useUser();
 
     // Ska senare ligga i någon config fil
     const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/"; 
@@ -27,20 +26,19 @@ export default function AdvertProvider({ children }: Props) {
         getAllAdverts();
     }, [])
 
-    // function addAdvert(advert: AdvertDto) {
-    //     if(user) {
-    //         fetch(baseUrl + "Advert/AddAdvert", {
-    //             method: "POST",
-    //             headers: { 
-    //                 "authorization": "token " + user.token,
-    //                 "content-type": "application/json",
-    //             },
-    //             body: JSON.stringify(advert)
-    //         })
-    //             .then(res => res.json())
-    //             .then(data => setAdverts(prevState => ([...prevState, data])))
-    //             .catch(err => console.error(err));
-    // }
+    function addAdvert(advert: AdvertDto) {
+        if (advert.userId === undefined) {
+            advert.userId = "9cfdf585-9021-4032-1402-08da9e5deb4b";
+        } 
+        fetch(baseUrl + "Advert/AddAdvert", {
+            method: "POST",
+            headers: { 
+                "content-type": "application/json",
+            },
+            body: JSON.stringify(advert)
+        })
+
+    }
 
     function getAllAdverts() {
         fetch(baseUrl + "Advert/GetAllAdverts")
@@ -56,29 +54,28 @@ export default function AdvertProvider({ children }: Props) {
             .catch(err => console.error(err))
     }
 
-    // function removeAdvert(id: string) {
-    //     if(user) {
-    //         fetch(baseUrl + "Advert/DeleteAdvertByIdAsync/" + id)
-    //     }
-    // }
+    function removeAdvert(id: string) {
+        fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+            method: "DELETE"
+        })
+    }
 
-    // function replaceAdvert(advert: Advert) {
-    //     if(user) {
-    //         fetch(baseUrl + "Advert/UpdateAdvertById/" + advert.id, {
-    //             method: "PATCH",
-    //             headers: {
-    //                 "content-type": "application/json"
-    //             },
-    //             body: JSON.stringify(advert)
-    //         });
-    //     }
-    // }
+    function replaceAdvert(id: string, advert: AdvertDto) {
+        fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(advert)
+        });
+
+    }
 
 
 
     return (
         <AdvertContext.Provider
-            value={{ adverts, getAdvertById }}
+            value={{ adverts, addAdvert, getAllAdverts, getAdvertById, removeAdvert, replaceAdvert }}
         >
             {children}
         </AdvertContext.Provider>
