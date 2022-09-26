@@ -51,7 +51,10 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
       <Text>Name: {advert?.name}</Text>
       <Text>Personality: {advert?.personallity}</Text>
       <Text>Race: {advert?.race}</Text>
-      <Text>id: {advert?.id}</Text>
+      <Text>Id: {advert?.id}</Text>
+      <Text>Sex: {advert?.sex}</Text>
+      <Text>Sex: {advert?.sex}</Text>
+
     </View>
   );
 }
