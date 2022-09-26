@@ -8,6 +8,7 @@ interface ContextValue {
   addAdvert: (advert: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
   removeAdvert: (id: string) => void; // boolean på dessa? kommer dock bli ett promise
   replaceAdvert: (id: string, product: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
+  getNextAdvert: (id: string) => string;
 }
 
 const AdvertContext = createContext<ContextValue>({} as ContextValue);
@@ -68,9 +69,26 @@ export default function AdvertProvider({ children }: Props) {
     });
   }
 
+  function getNextAdvert(id: string): string {
+    const index = adverts.findIndex((a) => a.id === id);
+    if (adverts[index + 1]) {
+      return adverts[index + 1].id;
+    }
+
+    return "";
+  }
+
   return (
     <AdvertContext.Provider
-      value={{ adverts, addAdvert, getAllAdverts, getAdvertById, removeAdvert, replaceAdvert }}
+      value={{
+        adverts,
+        addAdvert,
+        getAllAdverts,
+        getAdvertById,
+        removeAdvert,
+        replaceAdvert,
+        getNextAdvert,
+      }}
     >
       {children}
     </AdvertContext.Provider>
