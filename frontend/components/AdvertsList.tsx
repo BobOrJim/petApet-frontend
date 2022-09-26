@@ -9,13 +9,9 @@ export default function AdvertList() {
   const { adverts, getAllAdverts } = useAdverts();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={getAllAdverts}
-        />
-      }
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={getAllAdverts} />}
     >
       {adverts.map((advert) => (
         <Surface key={advert.id} style={styles.surface} elevation={2}>
