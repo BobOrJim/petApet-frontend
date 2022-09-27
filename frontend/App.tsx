@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { Pressable, Text } from "react-native";
 import AdvertProvider from "./contexts/AdvertContext";
+import AddAdvertScreen from "./screens/AddAdvertScreen";
 import MainScreen from "./screens/MainScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
@@ -13,6 +14,7 @@ export type RootStackParamList = {
   User: undefined;
   SignIn: undefined;
   SignUp: undefined;
+  AddAdvert: undefined;
 };
 
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +43,7 @@ export default function App() {
           <NativeStack.Screen name='User' component={UserScreen} />
           <NativeStack.Screen name='SignIn' component={SignInScreen} />
           <NativeStack.Screen name='SignUp' component={SignUpScreen} />
+          <NativeStack.Screen name='AddAdvert' component={AddAdvertScreen} />
         </NativeStack.Navigator>
       </NavigationContainer>
     </AdvertProvider>
