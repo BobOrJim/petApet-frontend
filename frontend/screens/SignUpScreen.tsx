@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -21,6 +21,7 @@ export default function SignUpScreen({ navigation }: Props) {
     navigation.navigate("SignIn");
   };
   const onRegisterPressed = (data: any) => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     navigation.navigate("User");
     console.log(data);
     signUp({ username: data.username, email: data.email, password: data.password });
