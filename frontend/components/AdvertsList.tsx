@@ -4,7 +4,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAdverts } from "../contexts/AdvertContext";
 import { useState } from "react";
 
-export default function AdvertList() {
+export default function AdvertList({ navigation }: any) {
   const [refreshing] = useState(false);
   const { adverts, getAllAdverts } = useAdverts();
 
@@ -17,7 +17,7 @@ export default function AdvertList() {
         <Surface key={advert.id} style={styles.surface} elevation={2}>
           <Pressable
             style={styles.maxedWidth}
-            onPress={() => console.log("navigate here to details")}
+            onPress={() => navigation.navigate("AdvertDetails", { advertId: advert.id })}
           >
             <Surface style={styles.imageContainer} elevation={5}>
               <Image style={styles.image} source={{ uri: advert.imageUrls }} />
@@ -37,7 +37,7 @@ export default function AdvertList() {
                   count++;
                   return (
                     <Ionicons
-                      key={String(Math.floor(Math.random() * 100000000))}
+                      key={count}
                       name={count > advert.grade ? "star-outline" : "star"}
                       size={10}
                       color='gold'
