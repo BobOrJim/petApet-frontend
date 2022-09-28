@@ -27,17 +27,19 @@ export default function AdvertProvider({ children }: Props) {
     getAllAdverts();
   }, []);
 
-  function addAdvert(advert: AdvertDto) {
+  async function addAdvert(advert: AdvertDto) {
     if (advert.userId === undefined) {
       advert.userId = "9cfdf585-9021-4032-1402-08da9e5deb4b";
     }
-    fetch(baseUrl + "Advert/AddAdvert", {
+    const response = await fetch(baseUrl + "Advert/AddAdvert", {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify(advert),
     });
+
+    return response.ok;
   }
 
   function getAllAdverts() {
@@ -53,20 +55,24 @@ export default function AdvertProvider({ children }: Props) {
       .catch((err) => console.error(err));
   }
 
-  function removeAdvert(id: string) {
-    fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+  async function removeAdvert(id: string) {
+    const response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
       method: "DELETE",
     });
+
+    return response.ok;
   }
 
-  function replaceAdvert(id: string, advert: AdvertDto) {
-    fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
+  async function replaceAdvert(id: string, advert: AdvertDto) {
+    const response = await fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify(advert),
     });
+
+    return response.ok;
   }
 
   function getNextAdvert(id: string): string {
