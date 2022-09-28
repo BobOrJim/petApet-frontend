@@ -25,7 +25,6 @@ export default function AdvertSearchfilters({
           setSearchfilters((prevState) => ({ ...prevState, searchAll: value }))
         }
       />
-      <Text>{searchFilters.searchAll}</Text>
       <CustomButton text='Go to add advert' onPress={() => navigation.navigate("AddAdvert")} />
     </View>
   );
