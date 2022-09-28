@@ -12,7 +12,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;
 const NUMBER_REGEX = /^[0-9]*$/;
-const LETTER_REGEX = /^[A-Öa-ö]+$/;
+const LETTER_REGEX = /^[A-Öa-ö\s]+$/;
 
 type Props = NativeStackScreenProps<RootStackParamList, "AddAdvert">;
 
@@ -117,20 +117,14 @@ export default function AddAdvertScreen({ navigation }: Props) {
         <CustomInput
           name='personallity'
           placeholder='Personality'
-          maxLength={2}
           keyboardType={"default"}
           control={control}
           rules={{
             required: "Personality is required",
-            minLength: {
-              value: 3,
-              message: "Must be longer than 3",
-            },
             maxLength: { value: 100, message: "Max 100 letters" },
             pattern: { value: LETTER_REGEX, message: "Must be letters" },
           }}
         />
-
         <CustomInput
           name='rentperiod'
           placeholder='Rent Period'
