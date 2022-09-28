@@ -1,35 +1,30 @@
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { RootStackParamList } from "../App";
 import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+type Props = NativeStackScreenProps<RootStackParamList>;
 
-function SignUpScreen() {
+export default function SignUpScreen({ navigation }: Props) {
   const { control, handleSubmit, watch } = useForm({});
   const { signUp } = useUserContext();
   const pwd = watch("password");
 
-  // tillfällig navigate kod
-  type Nav = {
-    navigate: (value: string) => void;
-  };
-  const navigation = useNavigation<Nav>();
-  // Tell the onHaveAnAccount where to navigate
-  const onHaveAnAccount = () => {
+  const onPressSignIn = () => {
     navigation.navigate("SignIn");
   };
   const onRegisterPressed = (data: any) => {
-    // Tell the onRegisterPressed where to navigate
-    navigation.navigate("");
+    navigation.navigate("User");
     console.log(data);
     signUp({ username: data.username, email: data.email, password: data.password });
   };
-  // tillfällig navigate kod
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -55,7 +50,7 @@ function SignUpScreen() {
           rules={{
             required: "Password is required",
             minLength: {
-              value: 3,
+              value: 8,
               message: "Password should be minimum 8 characters long",
             },
           }}
@@ -72,7 +67,7 @@ function SignUpScreen() {
         <CustomButton text='Register' onPress={handleSubmit(onRegisterPressed)} />
         <CustomButton
           text='Have an account? Sign in'
-          onPress={onHaveAnAccount}
+          onPress={onPressSignIn}
           bgColor='#FFFFFF'
           fgColor='#000000'
         />
@@ -92,5 +87,3 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 });
-
-export default SignUpScreen;
