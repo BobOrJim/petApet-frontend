@@ -1,34 +1,26 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
-import { Text, Image, View, BackHandler, StyleSheet } from "react-native";
-import { Button, Surface } from "react-native-paper";
+import { useEffect, useRef, useState } from "react";
+import { Text, Image, View, BackHandler } from "react-native";
+import { Button } from "react-native-paper";
 import { RootStackParamList } from "../App";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SMS from "expo-sms";
-import * as Mail from "expo-mail-composer";
+import ContactUserButton from "../components/ContactUserButtons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 
 export default function AdvertDetailsScreen({ route, navigation }: Props) {
   const [advert, setAdvert] = useState<Advert>();
-  const [advertId, setAdvertId] = useState(route.params.advertId);
+  const [advertId] = useState(route.params.advertId);
   const [visibility, setVisibility] = useState(false);
-  const [isAvailable, setIsAvailable] = useState({ text: false, mail: false });
   const { getAdvertById, getNextAdvert } = useAdverts();
-  // const { getUserById } = useUser();
+  const touchX = useRef(0);
 
-  let touchX = 0;
 
   useEffect(() => {
     getAdvertById(advertId).then((advert) => setAdvert(advert));
   }, [advertId]);
 
-  useEffect(() => {
-    SMS.isAvailableAsync().then(isAvailable => setIsAvailable(prevState => ({...prevState, text: isAvailable})));
-    Mail.isAvailableAsync().then(isAvailable => setIsAvailable(prevState => ({...prevState, mail: isAvailable})));
-  }, []);
 
   useEffect(() => {
     const backButtonEvent = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -49,28 +41,15 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
     setVisibility((prevState) => !prevState);
   }
 
-  function sendText() {
-    // user = getUserById(advert?.userId)
-    // SMS.sendSMSAsync(user.phonenumber, "")
-    SMS.sendSMSAsync("000000000", "Hejsan, ");
-  }
-
-  function sendMail() {
-    Mail.composeAsync({
-      // recipients: [user.mail]
-      recipients: ["placeholder@asd.com"],
-      subject: "Hejsan",
-    });
-  }
 
   return (
     <View
       style={{ height: "100%" }}
-      onTouchStart={(e) => (touchX = e.nativeEvent.pageX)}
+      onTouchStart={(e) => (touchX.current = e.nativeEvent.pageX)}
       onTouchEnd={(e) => {
-        if (touchX - e.nativeEvent.pageX > 20) {
+        if (touchX.current - e.nativeEvent.pageX > 20) {
           nextAdvert();
-        } else if (e.nativeEvent.pageX - touchX > 20) {
+        } else if (e.nativeEvent.pageX - touchX.current > 20) {
           navigation.goBack();
         }
       }}
@@ -87,39 +66,13 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
       <Button
         onPress={() => {
           toggleVisibility();
-          console.log("hejsan");
         }}
       >
         <Text>Kontakta ägaren</Text>
       </Button>
-      {visibility && (
-        <View style={styles.buttonContainer}>
-          {isAvailable.text && (
-            <Button style={styles.button} onPress={sendText}>
-              <Text>
-                sms <Ionicons name={"exit-outline"} size={17} />
-              </Text>
-            </Button>
-          )}
-          {isAvailable.mail && (
-            <Button style={styles.button} onPress={sendMail}>
-              <Text>
-                mail <Ionicons name={"exit-outline"} size={17} />
-              </Text>
-            </Button>
-          )}
-        </View>
-      )}
+      {visibility && <ContactUserButton />}
+
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  buttonContainer: {
-    height: 50,
-    flexDirection: "row",
-  },
-  button: {
-    flex: 1,
-  },
-});
