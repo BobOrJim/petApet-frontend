@@ -1,13 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { RootStackParamList } from "../App";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 
-export default function SignInScreen() {
+type Props = NativeStackScreenProps<RootStackParamList>;
+
+export default function SignInScreen({ navigation }: Props) {
   const {
     control,
     handleSubmit,
@@ -15,20 +19,14 @@ export default function SignInScreen() {
   } = useForm();
   const { signIn } = useUserContext();
 
-  // tillfällig navigate kod
-  type Nav = {
-    navigate: (value: string) => void;
-  };
-  const navigation = useNavigation<Nav>();
   const onSignInPressed = (data: any) => {
     navigation.navigate("Main");
     console.log(data);
     signIn({ username: data.username, password: data.password });
   };
-  const onCreateAccount = () => {
+  const onPressCreateAccount = () => {
     navigation.navigate("SignUp");
   };
-  // tillfällig navigate kod
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -36,25 +34,30 @@ export default function SignInScreen() {
         <DisplayAnImage></DisplayAnImage>
         <CustomInput
           name='username'
-          placeholder='username'
+          placeholder='Username'
           control={control}
           rules={{ required: "Username is required" }}
         />
         <CustomInput
           name='password'
-          placeholder='password'
+          placeholder='Password'
           control={control}
           rules={{
             required: "Password is required",
             minLength: {
-              value: 3,
+              value: 8,
               message: "Password should be minimum 3 characters long",
             },
           }}
           secureTextEntry
         />
         <CustomButton text='Login to Pet@Pet' onPress={handleSubmit(onSignInPressed)} />
-        <CustomButton text='Dont have an account? Create one' onPress={onCreateAccount} />
+        <CustomButton
+          text='Dont have an account? Create one'
+          onPress={onPressCreateAccount}
+          bgColor='#FFFFFF'
+          fgColor='#000000'
+        />
       </View>
     </ScrollView>
   );
