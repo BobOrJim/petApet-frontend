@@ -8,6 +8,7 @@ const CustomInput = ({
   rules = {},
   placeholder,
   secureTextEntry,
+  maxLength,
   keyboardType,
 }: any) => {
   return (
@@ -22,6 +23,7 @@ const CustomInput = ({
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
+              maxLength={maxLength}
               keyboardType={keyboardType}
               placeholder={placeholder}
               style={styles.input}
