@@ -9,6 +9,7 @@
 7: Använd GetUserById för att bygga klart en User entitet. Bygg klart getUser i UserContext
 8: Gör klart updateUser i UserContext
 9: Ändra connection string för nya db, seeda med snygg data och deploya.
+
 */
 
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
@@ -32,10 +33,7 @@ const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 export default function UserProvider({ children }: Props) {
   const [user, setUser] = useState<UserDto | null>(null);
 
-  function signIn(username: string, password: string) {
-    const signInDto: SingInDto = { username: username, password: password };
-
-    console.log("signIn" + username + password);
+  function signIn(signInDto: SingInDto) {
     (async () => {
       const token = await PostSignIn(signInDto);
       if (token) {
@@ -47,12 +45,7 @@ export default function UserProvider({ children }: Props) {
     })();
   }
 
-  function signUp(username: string, email: string, password: string) {
-    const signUpDto: SingUpDto = {
-      username: username,
-      email: email,
-      password: password,
-    };
+  function signUp(signUpDto: SingUpDto) {
     (async () => {
       const response = await PostSignUp(signUpDto);
       if (response) {
