@@ -12,6 +12,7 @@ import UserScreen from "./screens/UserScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import AdvertDetailsScreen from "./screens/AdvertDetailsScreen";
 import AddAdvertScreen from "./screens/AddAdvertScreen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export type RootStackParamList = {
   Main: undefined;
@@ -29,53 +30,55 @@ export default function App() {
   return (
     <UserProvider>
       <AdvertProvider>
-        <NavigationContainer>
-          <NativeStack.Navigator initialRouteName='Main'>
-            <NativeStack.Screen
-              name='Main'
-              component={MainScreen}
-              options={({ navigation }) => ({
-                headerLeft: () => (
-                  <Pressable onPress={() => navigation.navigate("SignIn")}>
-                    <Text>SignIn</Text>
-                  </Pressable>
-                ),
-                headerRight: () => (
-                  <Pressable onPress={() => navigation.navigate("User")}>
-                    <Ionicons name={"person"} size={17} />
-                  </Pressable>
-                ),
-              })}
-            />
-            <NativeStack.Screen
-              name='User'
-              component={UserScreen}
-              options={({ navigation }) => ({
-                headerRight: () => (
-                  <Pressable onPress={() => navigation.navigate("Settings")}>
-                    <Ionicons name={"cog"} size={17} />
-                  </Pressable>
-                ),
-              })}
-            />
-            <NativeStack.Screen name='Settings' component={SettingsScreen} />
-            <NativeStack.Screen name='SignIn' component={SignInScreen} />
-            <NativeStack.Screen name='SignUp' component={SignUpScreen} />
-            <NativeStack.Screen name='AddAdvert' component={AddAdvertScreen} />
-            <NativeStack.Screen
-              name='AdvertDetails'
-              component={AdvertDetailsScreen}
-              options={({ navigation }) => ({
-                animation: "slide_from_right",
-                headerTitle: () => (
-                  <Pressable onPress={() => navigation.navigate("Main")}>
-                    <Text>Main</Text>
-                  </Pressable>
-                ),
-              })}
-            />
-          </NativeStack.Navigator>
-        </NavigationContainer>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <NativeStack.Navigator initialRouteName='Main'>
+              <NativeStack.Screen
+                name='Main'
+                component={MainScreen}
+                options={({ navigation }) => ({
+                  headerLeft: () => (
+                    <Pressable onPress={() => navigation.navigate("SignIn")}>
+                      <Text>SignIn</Text>
+                    </Pressable>
+                  ),
+                  headerRight: () => (
+                    <Pressable onPress={() => navigation.navigate("User")}>
+                      <Ionicons name={"person"} size={17} />
+                    </Pressable>
+                  ),
+                })}
+              />
+              <NativeStack.Screen
+                name='User'
+                component={UserScreen}
+                options={({ navigation }) => ({
+                  headerRight: () => (
+                    <Pressable onPress={() => navigation.navigate("Settings")}>
+                      <Ionicons name={"cog"} size={17} />
+                    </Pressable>
+                  ),
+                })}
+              />
+              <NativeStack.Screen name='Settings' component={SettingsScreen} />
+              <NativeStack.Screen name='SignIn' component={SignInScreen} />
+              <NativeStack.Screen name='SignUp' component={SignUpScreen} />
+              <NativeStack.Screen name='AddAdvert' component={AddAdvertScreen} />
+              <NativeStack.Screen
+                name='AdvertDetails'
+                component={AdvertDetailsScreen}
+                options={({ navigation }) => ({
+                  animation: "slide_from_right",
+                  headerTitle: () => (
+                    <Pressable onPress={() => navigation.navigate("Main")}>
+                      <Text>Main</Text>
+                    </Pressable>
+                  ),
+                })}
+              />
+            </NativeStack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
       </AdvertProvider>
     </UserProvider>
   );
