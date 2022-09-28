@@ -15,7 +15,7 @@ export interface User {
   expiration: Date; //generated in backend
 }
 
-export interface UserDto extends Omit<User, "id" | "authId" | "username" | "email" | "password"> {}
+//export interface UserDto extends Omit<User, "id" | "authId" | "username" | "email" | "password"> {}
 export interface SignInDto extends Pick<User, "username" | "password"> {}
 export interface SignUpDto extends Pick<User, "username" | "password" | "email"> {}
 
