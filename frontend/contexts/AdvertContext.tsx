@@ -39,11 +39,7 @@ export default function AdvertProvider({ children }: Props) {
       body: JSON.stringify(advert),
     });
 
-    if(response.ok) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.ok;
   }
 
   function getAllAdverts() {
@@ -64,11 +60,7 @@ export default function AdvertProvider({ children }: Props) {
       method: "DELETE",
     });
 
-    if(response.ok) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.ok;
   }
 
   async function replaceAdvert(id: string, advert: AdvertDto) {
@@ -80,11 +72,7 @@ export default function AdvertProvider({ children }: Props) {
       body: JSON.stringify(advert),
     });
 
-    if(response.ok) {
-      return true;
-    } else {
-      return false;
-    }
+    return response.ok;
   }
 
   function getNextAdvert(id: string): string {
