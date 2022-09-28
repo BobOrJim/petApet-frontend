@@ -23,7 +23,7 @@ export default function SignInScreen() {
   const onSignInPressed = (data: any) => {
     navigation.navigate("Main");
     console.log(data);
-    signIn(data.username, data.password);
+    signIn({ username: data.username, password: data.password });
   };
   const onCreateAccount = () => {
     navigation.navigate("SignUp");

@@ -13,7 +13,7 @@
 */
 
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { UserDto, SingInDto, SingUpDto, TokenType, SignUpResponse } from "../models/User";
+import { UserDto, SignInDto, SignUpDto, TokenType, SignUpResponse } from "../models/User";
 import axios from "axios";
 
 interface Props {
@@ -21,8 +21,8 @@ interface Props {
 }
 
 interface IUserContext {
-  signIn: (username: string, password: string) => void; //ändra till signInDto med import
-  signUp: (username: string, email: string, password: string) => void; //ädnra till signUpDto
+  signIn: (signInDto: SignInDto) => void; //ändra till signInDto med import
+  signUp: (SignUpDto: SignUpDto) => void; //ädnra till signUpDto
   getUser: () => void;
   updateUser: () => void;
 }
@@ -33,7 +33,7 @@ const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 export default function UserProvider({ children }: Props) {
   const [user, setUser] = useState<UserDto | null>(null);
 
-  function signIn(signInDto: SingInDto) {
+  function signIn(signInDto: SignInDto) {
     (async () => {
       const token = await PostSignIn(signInDto);
       if (token) {
@@ -45,7 +45,7 @@ export default function UserProvider({ children }: Props) {
     })();
   }
 
-  function signUp(signUpDto: SingUpDto) {
+  function signUp(signUpDto: SignUpDto) {
     (async () => {
       const response = await PostSignUp(signUpDto);
       if (response) {
@@ -74,9 +74,9 @@ export default function UserProvider({ children }: Props) {
   );
 }
 
-const PostSignIn = async (signInDto: SingInDto): Promise<null | SingInDto> => {
+const PostSignIn = async (signInDto: SignInDto): Promise<null | SignInDto> => {
   try {
-    const { data, status } = await axios.post<SingInDto>(
+    const { data, status } = await axios.post<SignInDto>(
       baseUrl + "Authenticate/login",
       signInDto,
       {
@@ -98,9 +98,9 @@ const PostSignIn = async (signInDto: SingInDto): Promise<null | SingInDto> => {
   }
 };
 
-const PostSignUp = async (signUpDto: SingUpDto): Promise<null | SingUpDto> => {
+const PostSignUp = async (signUpDto: SignUpDto): Promise<null | SignUpDto> => {
   try {
-    const { data, status } = await axios.post<SingUpDto>(
+    const { data, status } = await axios.post<SignUpDto>(
       baseUrl + "Authenticate/register",
       signUpDto,
       {

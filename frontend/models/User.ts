@@ -14,8 +14,8 @@ export interface User {
 }
 
 export interface UserDto extends Omit<User, "id" | "authId" | "username" | "email" | "password"> {}
-export interface SingInDto extends Pick<User, "username" | "password"> {}
-export interface SingUpDto extends Pick<User, "username" | "password" | "email"> {}
+export interface SignInDto extends Pick<User, "username" | "password"> {}
+export interface SignUpDto extends Pick<User, "username" | "password" | "email"> {}
 
 //SignInResponse
 export type TokenType = {

@@ -27,7 +27,7 @@ function SignUpScreen() {
     // Tell the onRegisterPressed where to navigate
     navigation.navigate("");
     console.log(data);
-    signUp(data.username, data.email, data.password);
+    signUp({ username: data.username, email: data.email, password: data.password });
   };
   // tillfällig navigate kod
 
