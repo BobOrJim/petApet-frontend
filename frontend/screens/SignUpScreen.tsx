@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
+import { useUserContext } from "../contexts/UserContext";
 
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 function SignUpScreen() {
   const { control, handleSubmit, watch } = useForm({});
+  const { signUp } = useUserContext();
   const pwd = watch("password");
 
   // tillfällig navigate kod
@@ -21,9 +23,11 @@ function SignUpScreen() {
   const onHaveAnAccount = () => {
     navigation.navigate("SignIn");
   };
-  const onRegisterPressed = () => {
+  const onRegisterPressed = (data: any) => {
     // Tell the onRegisterPressed where to navigate
     navigation.navigate("");
+    console.log(data);
+    signUp(data.username, data.email, data.password);
   };
   // tillfällig navigate kod
 

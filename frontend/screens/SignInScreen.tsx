@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
+import { useUserContext } from "../contexts/UserContext";
 
 export default function SignInScreen() {
   const {
@@ -12,6 +13,7 @@ export default function SignInScreen() {
     handleSubmit,
     formState: {},
   } = useForm();
+  const { signIn } = useUserContext();
 
   // tillfällig navigate kod
   type Nav = {
@@ -21,6 +23,7 @@ export default function SignInScreen() {
   const onSignInPressed = (data: any) => {
     navigation.navigate("Main");
     console.log(data);
+    signIn(data.username, data.password);
   };
   const onCreateAccount = () => {
     navigation.navigate("SignUp");
