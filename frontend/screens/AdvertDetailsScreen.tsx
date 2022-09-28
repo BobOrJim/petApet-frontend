@@ -1,22 +1,26 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
-import { Text, Image, View, Button, BackHandler } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Text, Image, View, BackHandler } from "react-native";
+import { Button } from "react-native-paper";
 import { RootStackParamList } from "../App";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
+import ContactUserButton from "../components/ContactUserButtons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 
 export default function AdvertDetailsScreen({ route, navigation }: Props) {
   const [advert, setAdvert] = useState<Advert>();
-  const [advertId, setAdvertId] = useState(route.params.advertId);
+  const [advertId] = useState(route.params.advertId);
+  const [visibility, setVisibility] = useState(false);
   const { getAdvertById, getNextAdvert } = useAdverts();
+  const touchX = useRef(0);
 
-  let touchX = 0; // ??
 
   useEffect(() => {
     getAdvertById(advertId).then((advert) => setAdvert(advert));
   }, [advertId]);
+
 
   useEffect(() => {
     const backButtonEvent = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -33,14 +37,19 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
     }
   }
 
+  function toggleVisibility() {
+    setVisibility((prevState) => !prevState);
+  }
+
+
   return (
     <View
       style={{ height: "100%" }}
-      onTouchStart={(e) => (touchX = e.nativeEvent.pageX)}
+      onTouchStart={(e) => (touchX.current = e.nativeEvent.pageX)}
       onTouchEnd={(e) => {
-        if (touchX - e.nativeEvent.pageX > 20) {
+        if (touchX.current - e.nativeEvent.pageX > 20) {
           nextAdvert();
-        } else if (touchX - e.nativeEvent.pageX < 20) {
+        } else if (e.nativeEvent.pageX - touchX.current > 20) {
           navigation.goBack();
         }
       }}
@@ -54,7 +63,16 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
       <Text>Id: {advert?.id}</Text>
       <Text>Sex: {advert?.sex}</Text>
       <Text>Sex: {advert?.sex}</Text>
+      <Button
+        onPress={() => {
+          toggleVisibility();
+        }}
+      >
+        <Text>Kontakta ägaren</Text>
+      </Button>
+      {visibility && <ContactUserButton />}
 
     </View>
   );
 }
+
