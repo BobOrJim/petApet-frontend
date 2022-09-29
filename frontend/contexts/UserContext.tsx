@@ -48,7 +48,6 @@ export default function UserProvider({ children }: Props) {
         if (httpRespons_GetUserById == null || httpRespons_GetUserById.status != 200) {
           throw new Error("Httprequest to GetUserById failed");
         }
-
         const userInstance: User = JSON.parse(JSON.stringify(httpRespons_GetUserById.data));
         userBuild.alias = userInstance.alias;
         userBuild.phoneNr = userInstance.phoneNr;
@@ -56,7 +55,7 @@ export default function UserProvider({ children }: Props) {
         userBuild.profilePictureUrl = userInstance.profilePictureUrl;
 
         console.log(user);
-        setUser(user);
+        setUser(userBuild);
       } catch (error) {
         console.log("Error in signIn: ", error);
       }
