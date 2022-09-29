@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
+import { HttpRespons } from "../models/HttpTypes";
 
 interface ContextValue {
   adverts: Advert[];
