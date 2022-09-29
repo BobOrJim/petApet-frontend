@@ -5,7 +5,7 @@ import { Button } from "react-native-paper";
 import { RootStackParamList } from "../App";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
-import ContactUserButton from "../components/ContactUserButtons";
+import ContactUserButton from "../components/AdvertComponents/ContactUserButtons";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 
