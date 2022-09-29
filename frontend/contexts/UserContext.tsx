@@ -1,7 +1,8 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { SignInDto, SignUpDto, TokenType, SignUpResponse, User } from "../models/User";
 import axios from "axios";
-import { Advert } from "../models/Advert";
+//import { Advert } from "../models/Advert";
+import { HttpRespons } from "../models/HttpTypes";
 
 interface Props {
   children: ReactNode;
@@ -10,87 +11,79 @@ interface Props {
 interface IUserContext {
   signIn: (signInDto: SignInDto) => void;
   signUp: (SignUpDto: SignUpDto) => void;
-  getUser: () => User | undefined;
   updateUser: (userToUpdate: User) => Promise<void>;
+  user: User | undefined;
 }
 const UserContext = createContext<IUserContext>({} as IUserContext);
 export const useUserContext = (): IUserContext => useContext(UserContext);
 const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 
 export default function UserProvider({ children }: Props) {
-  const [user, setUser] = useState<User>({} as User);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   function signIn(signInDto: SignInDto) {
     (async () => {
-      const data: any = await PostSignIn(signInDto);
-      const token: TokenType = data;
-      //Login sussessfull. Try to build User entity.
-      if (token.token !== "") {
-        try {
-          //Step 1/4. Build props from the login data (User input)
-          const tokenInstance: TokenType = JSON.parse(JSON.stringify(token));
-          user.username = signInDto.username;
-          user.password = signInDto.password;
-          //Step 2/4. Build props from the token (generated in AuthController)
-          user.token = tokenInstance.token;
-          user.expiration = tokenInstance.expiration;
-          user.authId = tokenInstance.authUserId;
-          user.id = tokenInstance.userId;
-          //Step 3/4. Build props from UserController (from puppyDb, User table)
-          let [data, status] = await GetUserById(user.id, user.token);
-          if (status == 200) {
-            const userInstance: User = JSON.parse(JSON.stringify(data));
-            user.alias = userInstance.alias;
-            user.phoneNr = userInstance.phoneNr;
-            user.isLoggedIn = true;
-            user.profilePictureUrl = userInstance.profilePictureUrl;
-          } else {
-            throw new Error("GetUserById enpoint reply was not 200");
-          }
-          //Step 4/4. Build props from UserController (from puppyDb, Advert table)
-          [data, status] = await GetAdvertsByUserId(user.id, user.token);
-          if (status == 200) {
-            const adverts = JSON.parse(JSON.stringify(data));
-            user.adverts = adverts;
-          } else {
-            throw new Error("GetAdvertsByUserId enpoint reply was not 200");
-          }
-          //console.log(user);
-          setUser(user);
-        } catch (error) {
-          console.log("Error in signIn: ", error);
+      const httpRespons_PostSignIn: HttpRespons | null = await PostSignIn(signInDto);
+      try {
+        if (httpRespons_PostSignIn == null || httpRespons_PostSignIn.status != 200) {
+          throw new Error("Httprequest to get token failed");
         }
+
+        //Login sussessfull. Try to build User entity.
+        const userBuild: User = {} as User;
+        //Step 1/3. Build props from the login data (User input)
+        const tokenInstance: TokenType = JSON.parse(JSON.stringify(httpRespons_PostSignIn.data));
+        userBuild.username = signInDto.username;
+        userBuild.password = signInDto.password;
+        //Step 2/3. Build props from the token (generated in AuthController)
+        userBuild.token = tokenInstance.token;
+        userBuild.expiration = tokenInstance.expiration;
+        userBuild.authId = tokenInstance.authUserId;
+        userBuild.id = tokenInstance.userId;
+        //Step 3/3. Build props from UserController (from puppyDb, User table)
+        const httpRespons_GetUserById: HttpRespons | null = await GetUserById(
+          userBuild.id,
+          userBuild.token,
+        );
+        if (httpRespons_GetUserById == null || httpRespons_GetUserById.status != 200) {
+          throw new Error("Httprequest to GetUserById failed");
+        }
+
+        const userInstance: User = JSON.parse(JSON.stringify(httpRespons_GetUserById.data));
+        userBuild.alias = userInstance.alias;
+        userBuild.phoneNr = userInstance.phoneNr;
+        userBuild.isLoggedIn = true;
+        userBuild.profilePictureUrl = userInstance.profilePictureUrl;
+
+        console.log(user);
+        setUser(user);
+      } catch (error) {
+        console.log("Error in signIn: ", error);
       }
     })();
   }
 
   function signUp(signUpDto: SignUpDto) {
     (async () => {
-      const response = await PostSignUp(signUpDto);
-      if (response) {
-        const signUpResponse: SignUpResponse = JSON.parse(JSON.stringify(response));
+      const httpRespons: HttpRespons | null = await PostSignUp(signUpDto);
+      try {
+        if (httpRespons == null || httpRespons.status != 200) {
+          throw new Error("Httprequest to get token failed");
+        }
+
+        const signUpResponse: SignUpResponse = JSON.parse(JSON.stringify(httpRespons.data));
         console.log("signUpResponse.status= " + signUpResponse.status);
         console.log("signUpResponse.status= " + signUpResponse.message);
+      } catch (error) {
+        console.log("Error in signUp: ", error);
       }
     })();
-  }
-
-  function getUser(): User | undefined {
-    if (user.isLoggedIn) return user;
-    return undefined;
   }
 
   async function updateUser(userToUpdate: User) {
     if (userToUpdate.isLoggedIn) {
       try {
-        //Behöver user uppdateras
-        if (false) await PatchUser(userToUpdate, userToUpdate.token);
-        userToUpdate.adverts.forEach(async (advert) => {
-          //filtrera om advert skall till
-          if (false) await PostAdvert(advert, userToUpdate.token);
-          if (false) await PutAdvert(advert, userToUpdate.token);
-          if (false) await DeleteAdvert(advert.id, userToUpdate.token);
-        });
+        await PatchUser(userToUpdate, userToUpdate.token);
       } catch (error) {
         console.log("Error in updateUser: ", error);
       }
@@ -98,21 +91,21 @@ export default function UserProvider({ children }: Props) {
   }
 
   return (
-    <UserContext.Provider value={{ signIn, signUp, getUser, updateUser }}>
+    <UserContext.Provider value={{ signIn, signUp, updateUser, user }}>
       {children}
     </UserContext.Provider>
   );
 }
 
-const PostSignIn = async (signInDto: SignInDto): Promise<any> => {
+const PostSignIn = async (signInDto: SignInDto): Promise<HttpRespons | null> => {
   try {
-    const { data, status } = await axios.post(baseUrl + "Authenticate/login", signInDto, {
+    const httpRespons: HttpRespons = await axios.post(baseUrl + "Authenticate/login", signInDto, {
       headers: {
         Accept: "application/json",
       },
     });
     console.log("PostSignIn status is: ", status);
-    return data;
+    return httpRespons;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
@@ -124,15 +117,19 @@ const PostSignIn = async (signInDto: SignInDto): Promise<any> => {
   }
 };
 
-const PostSignUp = async (signUpDto: SignUpDto): Promise<any> => {
+const PostSignUp = async (signUpDto: SignUpDto): Promise<HttpRespons | null> => {
   try {
-    const { data, status } = await axios.post(baseUrl + "Authenticate/register", signUpDto, {
-      headers: {
-        Accept: "application/json",
+    const httpRespons: HttpRespons = await axios.post(
+      baseUrl + "Authenticate/register",
+      signUpDto,
+      {
+        headers: {
+          Accept: "application/json",
+        },
       },
-    });
+    );
     console.log("PostSignUp status is: ", status);
-    return data;
+    return httpRespons;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
@@ -144,15 +141,15 @@ const PostSignUp = async (signUpDto: SignUpDto): Promise<any> => {
   }
 };
 
-const GetUserById = async (userId: string, token: string): Promise<any> => {
+const GetUserById = async (userId: string, token: string): Promise<HttpRespons | null> => {
   try {
-    const { data, status } = await axios.get(baseUrl + "User/GetUserById/" + userId, {
+    const httpRespons: HttpRespons = await axios.get(baseUrl + "User/GetUserById/" + userId, {
       headers: {
         Accept: "application/json",
         Authorization: "Bearer " + token,
       },
     });
-    return [data, status];
+    return httpRespons;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
@@ -164,46 +161,24 @@ const GetUserById = async (userId: string, token: string): Promise<any> => {
   }
 };
 
-const GetAdvertsByUserId = async (userId: string, token: string): Promise<any> => {
+const PatchUser = async (user: User, token: string): Promise<void> => {
   try {
-    const { data, status } = await axios.get(baseUrl + "Advert/GetAdvertsByUserId/" + userId, {
+    await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
       headers: {
         Accept: "application/json",
         Authorization: "Bearer " + token,
       },
     });
-    return [data, status];
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
-      return null;
     } else {
       console.log("unexpected error: ", error);
-      return null;
     }
   }
 };
 
-const PatchUser = async (user: User, token: string): Promise<any> => {
-  try {
-    const { data, status } = await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    return [data, status];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error : ", error.message);
-      return null;
-    } else {
-      console.log("unexpected error: ", error);
-      return null;
-    }
-  }
-};
-
+/*
 const PostAdvert = async (advert: Advert, token: string): Promise<any> => {
   try {
     const { data, status } = await axios.post(baseUrl + "AddAdvert", advert, {
@@ -263,3 +238,24 @@ const DeleteAdvert = async (advertId: string, token: string): Promise<any> => {
     }
   }
 };
+
+const GetAdvertsByUserId = async (userId: string, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.get(baseUrl + "Advert/GetAdvertsByUserId/" + userId, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+*/
