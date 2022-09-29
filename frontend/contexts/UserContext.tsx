@@ -1,46 +1,65 @@
-/*
-
-1: Skapa två nya lokala db (IdentityDb + puppyDb)
-2: Gör ny endpoint getAdvertsByUserId. Uppdatera båda *.rest filer
-3: I backend skall Adverts bort i User
-4: Lägg till AuthId:String i User i backend
-5: AuthRegister+AuthLogin endpointen, skall skapa en ny User (om user saknas).
-6: Lägg in UserId tillsammans med AuthId i token, och snygga till namnen i token.
-7: Använd GetUserById för att bygga klart en User entitet. Bygg klart getUser i UserContext
-8: Gör klart updateUser i UserContext
-9: Ändra connection string för nya db, seeda med snygg data och deploya.
-
-*/
-
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { UserDto, SignInDto, SignUpDto, TokenType, SignUpResponse } from "../models/User";
+import { SignInDto, SignUpDto, TokenType, SignUpResponse, User } from "../models/User";
 import axios from "axios";
+import { Advert } from "../models/Advert";
 
 interface Props {
   children: ReactNode;
 }
 
 interface IUserContext {
-  signIn: (signInDto: SignInDto) => void; //ändra till signInDto med import
-  signUp: (SignUpDto: SignUpDto) => void; //ädnra till signUpDto
-  getUser: () => void;
-  updateUser: () => void;
+  signIn: (signInDto: SignInDto) => void;
+  signUp: (SignUpDto: SignUpDto) => void;
+  getUser: () => User | undefined;
+  updateUser: (userToUpdate: User) => Promise<void>;
 }
 const UserContext = createContext<IUserContext>({} as IUserContext);
 export const useUserContext = (): IUserContext => useContext(UserContext);
 const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 
 export default function UserProvider({ children }: Props) {
-  const [user, setUser] = useState<UserDto | null>(null);
+  const [user, setUser] = useState<User>({} as User);
 
   function signIn(signInDto: SignInDto) {
     (async () => {
-      const token = await PostSignIn(signInDto);
-      if (token) {
-        const tokenInstance: TokenType = JSON.parse(JSON.stringify(token));
-        console.log("tokenInstance.text= " + tokenInstance.token);
-        console.log("tokenInstance.expiration= " + tokenInstance.expiration);
-        console.log("tokenInstance.user= " + tokenInstance.user);
+      const data: any = await PostSignIn(signInDto);
+      const token: TokenType = data;
+      //Login sussessfull. Try to build User entity.
+      if (token.token !== "") {
+        try {
+          //Step 1/4. Build props from the login data (User input)
+          const tokenInstance: TokenType = JSON.parse(JSON.stringify(token));
+          user.username = signInDto.username;
+          user.password = signInDto.password;
+          //Step 2/4. Build props from the token (generated in AuthController)
+          user.token = tokenInstance.token;
+          user.expiration = tokenInstance.expiration;
+          user.authId = tokenInstance.authUserId;
+          user.id = tokenInstance.userId;
+          //Step 3/4. Build props from UserController (from puppyDb, User table)
+          let [data, status] = await GetUserById(user.id, user.token);
+          if (status == 200) {
+            const userInstance: User = JSON.parse(JSON.stringify(data));
+            user.alias = userInstance.alias;
+            user.phoneNr = userInstance.phoneNr;
+            user.isLoggedIn = true;
+            user.profilePictureUrl = userInstance.profilePictureUrl;
+          } else {
+            throw new Error("GetUserById enpoint reply was not 200");
+          }
+          //Step 4/4. Build props from UserController (from puppyDb, Advert table)
+          [data, status] = await GetAdvertsByUserId(user.id, user.token);
+          if (status == 200) {
+            const adverts = JSON.parse(JSON.stringify(data));
+            user.adverts = adverts;
+          } else {
+            throw new Error("GetAdvertsByUserId enpoint reply was not 200");
+          }
+          //console.log(user);
+          setUser(user);
+        } catch (error) {
+          console.log("Error in signIn: ", error);
+        }
       }
     })();
   }
@@ -56,15 +75,26 @@ export default function UserProvider({ children }: Props) {
     })();
   }
 
-  function getUser() {
-    //Not implemented yet
-    //Will use atleast 2 endpoints.
-    console.log("getUser");
+  function getUser(): User | undefined {
+    if (user.isLoggedIn) return user;
+    return undefined;
   }
 
-  function updateUser() {
-    //Not implemented yet
-    console.log("updateUser");
+  async function updateUser(userToUpdate: User) {
+    if (userToUpdate.isLoggedIn) {
+      try {
+        //Behöver user uppdateras
+        if (false) await PatchUser(userToUpdate, userToUpdate.token);
+        userToUpdate.adverts.forEach(async (advert) => {
+          //filtrera om advert skall till
+          if (false) await PostAdvert(advert, userToUpdate.token);
+          if (false) await PutAdvert(advert, userToUpdate.token);
+          if (false) await DeleteAdvert(advert.id, userToUpdate.token);
+        });
+      } catch (error) {
+        console.log("Error in updateUser: ", error);
+      }
+    }
   }
 
   return (
@@ -74,17 +104,13 @@ export default function UserProvider({ children }: Props) {
   );
 }
 
-const PostSignIn = async (signInDto: SignInDto): Promise<null | SignInDto> => {
+const PostSignIn = async (signInDto: SignInDto): Promise<any> => {
   try {
-    const { data, status } = await axios.post<SignInDto>(
-      baseUrl + "Authenticate/login",
-      signInDto,
-      {
-        headers: {
-          Accept: "application/json",
-        },
+    const { data, status } = await axios.post(baseUrl + "Authenticate/login", signInDto, {
+      headers: {
+        Accept: "application/json",
       },
-    );
+    });
     console.log("PostSignIn status is: ", status);
     return data;
   } catch (error) {
@@ -98,19 +124,135 @@ const PostSignIn = async (signInDto: SignInDto): Promise<null | SignInDto> => {
   }
 };
 
-const PostSignUp = async (signUpDto: SignUpDto): Promise<null | SignUpDto> => {
+const PostSignUp = async (signUpDto: SignUpDto): Promise<any> => {
   try {
-    const { data, status } = await axios.post<SignUpDto>(
-      baseUrl + "Authenticate/register",
-      signUpDto,
-      {
-        headers: {
-          Accept: "application/json",
-        },
+    const { data, status } = await axios.post(baseUrl + "Authenticate/register", signUpDto, {
+      headers: {
+        Accept: "application/json",
       },
-    );
+    });
     console.log("PostSignUp status is: ", status);
     return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const GetUserById = async (userId: string, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.get(baseUrl + "User/GetUserById/" + userId, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const GetAdvertsByUserId = async (userId: string, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.get(baseUrl + "Advert/GetAdvertsByUserId/" + userId, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const PatchUser = async (user: User, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const PostAdvert = async (advert: Advert, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.post(baseUrl + "AddAdvert", advert, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const PutAdvert = async (advert: Advert, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.put(baseUrl + "UpdateAdvert/" + advert.id, advert, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log("Axios error : ", error.message);
+      return null;
+    } else {
+      console.log("unexpected error: ", error);
+      return null;
+    }
+  }
+};
+
+const DeleteAdvert = async (advertId: string, token: string): Promise<any> => {
+  try {
+    const { data, status } = await axios.delete(baseUrl + "DeleteAdvert/" + advertId, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return [data, status];
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
