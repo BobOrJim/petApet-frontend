@@ -104,7 +104,6 @@ const PostSignIn = async (signInDto: SignInDto): Promise<HttpRespons | null> => 
         Accept: "application/json",
       },
     });
-    console.log("PostSignIn status is: ", status);
     return httpRespons;
   } catch (error) {
     if (axios.isAxiosError(error)) {
