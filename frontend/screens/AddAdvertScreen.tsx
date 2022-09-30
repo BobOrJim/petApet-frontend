@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Audio } from "expo-av";
+import * as Haptics from "expo-haptics";
 import { ScrollView, StyleSheet, View, Text, BackHandler } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
@@ -17,14 +17,17 @@ const LETTER_REGEX = /^[A-Öa-ö\s]+$/;
 type Props = NativeStackScreenProps<RootStackParamList, "AddAdvert">;
 
 export default function AddAdvertScreen({ navigation }: Props) {
-  const [sound, setSound] = React.useState<Audio.Sound>();
+  const [sound, setSound] = useState<Audio.Sound>();
   const { addAdvert } = useAdverts();
+
+  const onAddAdvertFailed = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  };
 
   async function playSound() {
     console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync(require("../assets/dog_woof.mp3"));
     setSound(sound);
-
     await sound.playAsync();
     React.useEffect(() => {
       return () => {
@@ -47,6 +50,8 @@ export default function AddAdvertScreen({ navigation }: Props) {
   const onAddAdvertPressed = (data: any) => {
     console.log(data);
     addAdvert(data);
+    alert("Advert added");
+    navigation.navigate("Main");
     playSound();
   };
 
@@ -56,7 +61,6 @@ export default function AddAdvertScreen({ navigation }: Props) {
     formState: {},
   } = useForm();
 
-  // tillfällig navigate kod
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
@@ -153,7 +157,10 @@ export default function AddAdvertScreen({ navigation }: Props) {
             maxLength: { value: 300, message: "Too long url" },
           }}
         />
-        <CustomButton text='Add advert' onPress={handleSubmit(onAddAdvertPressed)} />
+        <CustomButton
+          text='Add advert'
+          onPress={handleSubmit(onAddAdvertPressed, onAddAdvertFailed)}
+        />
       </View>
     </ScrollView>
   );
