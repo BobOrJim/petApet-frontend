@@ -128,7 +128,6 @@ const PostSignUp = async (signUpDto: SignUpDto): Promise<HttpRespons | null> => 
         },
       },
     );
-    console.log("PostSignUp status is: ", status);
     return httpRespons;
   } catch (error) {
     if (axios.isAxiosError(error)) {

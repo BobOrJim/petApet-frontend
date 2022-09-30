@@ -7,6 +7,7 @@ import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
+import * as Haptics from "expo-haptics";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -17,6 +18,10 @@ export default function SignInScreen({ navigation }: Props) {
     formState: {},
   } = useForm();
   const { signIn } = useUserContext();
+
+  const onLoginFailedHaptic = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  };
 
   const onSignInPressed = (data: any) => {
     navigation.navigate("Main");
@@ -50,7 +55,10 @@ export default function SignInScreen({ navigation }: Props) {
           }}
           secureTextEntry
         />
-        <CustomButton text='Login to Pet@Pet' onPress={handleSubmit(onSignInPressed)} />
+        <CustomButton
+          text='Login to Pet@Pet'
+          onPress={handleSubmit(onSignInPressed, onLoginFailedHaptic)}
+        />
         <CustomButton
           text='Dont have an account? Create one'
           onPress={onPressCreateAccount}
