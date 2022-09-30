@@ -10,6 +10,7 @@ import { Card, Title, Paragraph, IconButton } from "react-native-paper";
 import { StyleSheet } from "react-native";
 type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 import StarRating from "../components/AdvertComponents/StarRating";
+import { useUserContext } from "../contexts/UserContext";
 
 export default function AdvertDetailsScreen({ route, navigation }: Props) {
   const [advert, setAdvert] = useState<Advert>();
@@ -17,6 +18,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
   const [visibility, setVisibility] = useState(false);
   const { getAdvertById, getNextAdvert } = useAdverts();
   const [liked, setLiked] = useState(false);
+  const { user } = useUserContext();
   const touchX = useRef(0);
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
           }
         }}
       >
+        
         <Card elevation={5} style={styles.centered}>
           <Card.Title
             title=''
@@ -77,16 +80,16 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
             <Paragraph>Race: {advert?.race}</Paragraph>
             <Paragraph>Sex: {advert?.sex}</Paragraph>
           </Card.Content>
-          <Card.Actions>
+          {user &&
             <Button
               onPress={() => {
                 toggleVisibility();
               }}
             >
               <Text>Kontakta ägaren</Text>
-            </Button>
-            {visibility && <ContactUserButton />}
-          </Card.Actions>
+            </Button>}
+            
+            {visibility && <ContactUserButton userId={advert?.userId}/>}
         </Card>
       </View>
     </>

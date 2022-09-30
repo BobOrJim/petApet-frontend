@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { SignInDto, SignUpDto, TokenType, SignUpResponse, User } from "../models/User";
+import { SignInDto, SignUpDto, TokenType, SignUpResponse, User, ContactDetails } from "../models/User";
 import axios from "axios";
 //import { Advert } from "../models/Advert";
 import { HttpRespons } from "../models/HttpTypes";
@@ -12,6 +12,7 @@ interface IUserContext {
   signIn: (signInDto: SignInDto) => void;
   signUp: (SignUpDto: SignUpDto) => void;
   updateUser: (userToUpdate: User) => Promise<void>;
+  GetContactDetailsByUserId: (id: string) => Promise<ContactDetails>;
   user: User | undefined;
 }
 const UserContext = createContext<IUserContext>({} as IUserContext);
@@ -89,9 +90,32 @@ export default function UserProvider({ children }: Props) {
       }
     }
   }
+  async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
+    if(user) {
+      try {
+        const response = await fetch(baseUrl + "User/GetUserById/" + userId, {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + user.token,
+        },
+      });    
+      if(response.ok) {
+        const userDetails: User = await response.json();
+        return userDetails as ContactDetails;
+      } else {
+        throw new Error(response.statusText)
+      }
+      } catch(err) {
+        console.log(err)
+        return {} as ContactDetails;
+      }
+    }
+    return {} as ContactDetails;
+  }
+
 
   return (
-    <UserContext.Provider value={{ signIn, signUp, updateUser, user }}>
+    <UserContext.Provider value={{ signIn, signUp, updateUser, user, GetContactDetailsByUserId }}>
       {children}
     </UserContext.Provider>
   );
@@ -175,6 +199,8 @@ const PatchUser = async (user: User, token: string): Promise<void> => {
     }
   }
 };
+
+
 
 /*
 const PostAdvert = async (advert: Advert, token: string): Promise<any> => {

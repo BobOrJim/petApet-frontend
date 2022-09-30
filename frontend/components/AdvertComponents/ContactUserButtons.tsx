@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import * as SMS from "expo-sms";
 import * as Mail from "expo-mail-composer";
 import { View, StyleSheet } from "react-native";
-import { Button, Text } from "react-native-paper";
+import {  Text, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useUserContext } from "../../contexts/UserContext";
+import { ContactDetails } from "../../models/User";
 
-// interface Props: {
-//     userId: string;
-// }
+interface Props {
+    userId: string | undefined;
+}
 
-export default function ContactUserButton() {
+export default function ContactUserButton({ userId } : Props) {
   const [isAvailable, setIsAvailable] = useState({ text: false, mail: false });
-  // const [user, setUser] = useState<User>(undefined)
-  // const { getUserById } = useUser();
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({} as ContactDetails);
+  const { user, GetContactDetailsByUserId } = useUserContext();
+
   useEffect(() => {
     SMS.isAvailableAsync().then((isAvailable) =>
       setIsAvailable((prevState) => ({ ...prevState, text: isAvailable })),
@@ -20,37 +23,45 @@ export default function ContactUserButton() {
     Mail.isAvailableAsync().then((isAvailable) =>
       setIsAvailable((prevState) => ({ ...prevState, mail: isAvailable })),
     );
-    // getUserById(userId).then(user => setUser(user))
+
+    if(userId) {
+      console.log("------------")
+      GetContactDetailsByUserId(userId).then(res => console.log(res));
+      console.log("------------")
+    }
+
   }, []);
 
   function sendText() {
-    // SMS.sendSMSAsync(user.phonenumber, "")
-    SMS.sendSMSAsync("000000000", "Hejsan, ");
+    SMS.sendSMSAsync("1336", "")
+    // SMS.sendSMSAsync(contactDetails ? contactDetails.phoneNr : "", "Hejsan, ");
+    // SMS.sendSMSAsync(contactDetails.phoneNr, "Hejsan, ");
   }
 
   function sendMail() {
     Mail.composeAsync({
-      // recipients: [user.mail]
-      recipients: ["placeholder@asd.com"],
+      //recipients: [contactDetails.email],
+      recipients: ["asd"],
       subject: "Hejsan",
     });
   }
   return (
     <View style={styles.buttonContainer}>
-      {isAvailable.text && (
+      <Button onPress={() => console.log(isAvailable)}  ><Text>Log availa</Text></Button>
+      {isAvailable.text && //contactDetails.phoneNr && 
         <Button style={styles.button} onPress={sendText}>
           <Text>
             sms <Ionicons name={"exit-outline"} size={17} />
           </Text>
         </Button>
-      )}
-      {isAvailable.mail && (
+      }
+      {isAvailable.mail && //contactDetails.email &&
         <Button style={styles.button} onPress={sendMail}>
           <Text>
             mail <Ionicons name={"exit-outline"} size={17} />
           </Text>
         </Button>
-      )}
+      }
     </View>
   );
 }
@@ -61,6 +72,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   button: {
-    flex: 1,
+    // flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
   },
 });
