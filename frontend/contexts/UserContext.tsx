@@ -24,6 +24,7 @@ export default function UserProvider({ children }: Props) {
   function signIn(signInDto: SignInDto) {
     (async () => {
       const httpRespons_PostSignIn: HttpRespons | null = await PostSignIn(signInDto);
+      console.log(httpRespons_PostSignIn);
       try {
         if (httpRespons_PostSignIn == null || httpRespons_PostSignIn.status != 200) {
           throw new Error("Httprequest to get token failed");
