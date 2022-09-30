@@ -20,8 +20,10 @@ export default function SignUpScreen({ navigation }: Props) {
   const onPressSignIn = () => {
     navigation.navigate("SignIn");
   };
+  const onRegisterFailed = () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+  };
   const onRegisterPressed = (data: any) => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     navigation.navigate("User");
     console.log(data);
     signUp({ username: data.username, email: data.email, password: data.password });
@@ -41,7 +43,10 @@ export default function SignUpScreen({ navigation }: Props) {
           placeholder='Email'
           name='email'
           control={control}
-          rules={{ pattern: { value: EMAIL_REGEX, message: "Must be a valid email adress" } }}
+          rules={{
+            required: "Email is required",
+            pattern: { value: EMAIL_REGEX, message: "Must be a valid email adress" },
+          }}
         />
         <CustomInput
           placeholder='Password'
@@ -62,10 +67,11 @@ export default function SignUpScreen({ navigation }: Props) {
           control={control}
           secureTextEntry
           rules={{
+            required: "Must repeat password",
             validate: (value: any) => value === pwd || "Password not matching",
           }}
         />
-        <CustomButton text='Register' onPress={handleSubmit(onRegisterPressed)} />
+        <CustomButton text='Register' onPress={handleSubmit(onRegisterPressed, onRegisterFailed)} />
         <CustomButton
           text='Have an account? Sign in'
           onPress={onPressSignIn}
