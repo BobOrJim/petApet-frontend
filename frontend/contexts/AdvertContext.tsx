@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
 import { HttpRespons } from "../models/HttpTypes";
+import { useUserContext } from "./UserContext";
 
 interface ContextValue {
   adverts: Advert[];
@@ -20,7 +21,7 @@ interface Props {
 
 export default function AdvertProvider({ children }: Props) {
   const [adverts, setAdverts] = useState<Advert[]>([]);
-
+  const { user } = useUserContext();
   // Ska senare ligga i någon config fil
   const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 
@@ -29,18 +30,19 @@ export default function AdvertProvider({ children }: Props) {
   }, []);
 
   async function addAdvert(advert: AdvertDto) {
-    if (advert.userId === undefined) {
-      advert.userId = "9cfdf585-9021-4032-1402-08da9e5deb4b";
+    if(user) {
+      const response = await fetch(baseUrl + "Advert/AddAdvert", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "authorization": "Bearer " + user.token
+        },
+        body: JSON.stringify({...advert, userId: user.id}),
+      });
+  
+      return response.ok;
+      
     }
-    const response = await fetch(baseUrl + "Advert/AddAdvert", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(advert),
-    });
-
-    return response.ok;
   }
 
   function getAllAdverts() {
@@ -57,23 +59,34 @@ export default function AdvertProvider({ children }: Props) {
   }
 
   async function removeAdvert(id: string) {
-    const response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
-      method: "DELETE",
-    });
+    let response;
+    if(user) {
+      response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+        method: "DELETE",
+        headers: {
+          "authorization": "Bearer " + user.token
+        }
+      });
+    }
 
-    return response.ok;
+    return response?.ok ? true : false;
   }
 
   async function replaceAdvert(id: string, advert: AdvertDto) {
-    const response = await fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(advert),
-    });
+    let response;
+    if(user) {
+      response = await fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          "authorization": "Bearer " + user.token
+        },
+        body: JSON.stringify(advert),
+      });
 
-    return response.ok;
+    }
+
+    return response?.ok ? true : false;
   }
 
   function getNextAdvert(id: string): string {
