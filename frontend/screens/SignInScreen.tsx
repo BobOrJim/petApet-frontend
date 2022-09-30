@@ -8,6 +8,7 @@ import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 import * as Haptics from "expo-haptics";
+import * as Speech from "expo-speech";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -23,10 +24,16 @@ export default function SignInScreen({ navigation }: Props) {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   };
 
+  const speak = (data: string) => {
+    const thingToSay = "Welcome " + data;
+    Speech.speak(thingToSay);
+  };
+
   const onSignInPressed = (data: any) => {
     navigation.navigate("Main");
     console.log(data);
     signIn({ username: data.username, password: data.password });
+    speak(data.username);
   };
   const onPressCreateAccount = () => {
     navigation.navigate("SignUp");
@@ -50,7 +57,7 @@ export default function SignInScreen({ navigation }: Props) {
             required: "Password is required",
             minLength: {
               value: 8,
-              message: "Password should be minimum 3 characters long",
+              message: "Password should be minimum 8 characters long",
             },
           }}
           secureTextEntry
