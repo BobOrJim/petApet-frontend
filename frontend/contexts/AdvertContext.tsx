@@ -1,14 +1,15 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
 import { HttpRespons } from "../models/HttpTypes";
+import { useUserContext } from "./UserContext";
 
 interface ContextValue {
   adverts: Advert[];
   getAllAdverts: () => void;
   getAdvertById: (id: string) => Promise<Advert>;
-  addAdvert: (advert: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
-  removeAdvert: (id: string) => void; // boolean på dessa? kommer dock bli ett promise
-  replaceAdvert: (id: string, product: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
+  addAdvert: (advert: AdvertDto) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
+  removeAdvert: (id: string) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
+  replaceAdvert: (advert: Advert) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
   getNextAdvert: (id: string) => string;
 }
 
@@ -20,7 +21,7 @@ interface Props {
 
 export default function AdvertProvider({ children }: Props) {
   const [adverts, setAdverts] = useState<Advert[]>([]);
-
+  const { user } = useUserContext();
   // Ska senare ligga i någon config fil
   const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 
@@ -28,19 +29,29 @@ export default function AdvertProvider({ children }: Props) {
     getAllAdverts();
   }, []);
 
-  async function addAdvert(advert: AdvertDto) {
-    if (advert.userId === undefined) {
-      advert.userId = "9cfdf585-9021-4032-1402-08da9e5deb4b";
-    }
-    const response = await fetch(baseUrl + "Advert/AddAdvert", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(advert),
-    });
+  async function addAdvert(advert: AdvertDto): Promise<boolean> {
+    if (user) {
+      try {
+        const response = await fetch(baseUrl + "Advert/AddAdvert", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + user.token,
+          },
+          body: JSON.stringify({ ...advert, userId: user.id }),
+        });
 
-    return response.ok;
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    }
+    return false;
   }
 
   function getAllAdverts() {
@@ -56,24 +67,53 @@ export default function AdvertProvider({ children }: Props) {
       .catch((err) => console.error(err));
   }
 
-  async function removeAdvert(id: string) {
-    const response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
-      method: "DELETE",
-    });
-
-    return response.ok;
+  async function removeAdvert(id: string): Promise<boolean> {
+    let response;
+    if (user) {
+      try {
+        response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+          method: "DELETE",
+          headers: {
+            authorization: "Bearer " + user.token,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    }
+    return false;
   }
 
-  async function replaceAdvert(id: string, advert: AdvertDto) {
-    const response = await fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(advert),
-    });
+  async function replaceAdvert(advert: Advert): Promise<boolean> {
+    let response;
+    if (user) {
+      try {
+        response = await fetch(baseUrl + "Advert/UpdateAdvert/" + advert.id, {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + user.token,
+          },
+          body: JSON.stringify(advert),
+        });
 
-    return response.ok;
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    }
+    return false;
   }
 
   function getNextAdvert(id: string): string {
