@@ -7,6 +7,7 @@ export interface User {
   //adverts: Advert[]; //from puppyDb Table Advert (is build in UserContext using the PK-FK relation in backend)
   isLoggedIn: boolean; //from puppyDb Table User. Streachgoal ish
   profilePictureUrl: string; //from puppyDb Table User
+  contactEmail: string; //from puppyDb Table User
   authId: string; //from identityDb
   username: string; //from identityDb
   email: string; //from identityDb
