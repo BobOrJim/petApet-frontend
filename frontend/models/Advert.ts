@@ -11,4 +11,4 @@ export interface Advert {
     imageUrls: string;
     userId: string;
 }
-export interface AdvertDto extends Omit<Advert, "id" | "review" | "grade"> {};
+export interface AdvertDto extends Omit<Advert, "id" | "review" | "grade" | "userId"> {};

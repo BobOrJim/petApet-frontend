@@ -7,9 +7,9 @@ interface ContextValue {
   adverts: Advert[];
   getAllAdverts: () => void;
   getAdvertById: (id: string) => Promise<Advert>;
-  addAdvert: (advert: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
-  removeAdvert: (id: string) => void; // boolean på dessa? kommer dock bli ett promise
-  replaceAdvert: (id: string, product: AdvertDto) => void; // boolean på dessa? kommer dock bli ett promise
+  addAdvert: (advert: AdvertDto) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
+  removeAdvert: (id: string) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
+  replaceAdvert: (advert: Advert) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
   getNextAdvert: (id: string) => string;
 }
 
@@ -29,20 +29,29 @@ export default function AdvertProvider({ children }: Props) {
     getAllAdverts();
   }, []);
 
-  async function addAdvert(advert: AdvertDto) {
-    if(user) {
-      const response = await fetch(baseUrl + "Advert/AddAdvert", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "authorization": "Bearer " + user.token
-        },
-        body: JSON.stringify({...advert, userId: user.id}),
-      });
-  
-      return response.ok;
-      
+  async function addAdvert(advert: AdvertDto): Promise<boolean> {
+    if (user) {
+      try {
+        const response = await fetch(baseUrl + "Advert/AddAdvert", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + user.token,
+          },
+          body: JSON.stringify({ ...advert, userId: user.id }),
+        });
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
     }
+    return false;
   }
 
   function getAllAdverts() {
@@ -58,35 +67,53 @@ export default function AdvertProvider({ children }: Props) {
       .catch((err) => console.error(err));
   }
 
-  async function removeAdvert(id: string) {
+  async function removeAdvert(id: string): Promise<boolean> {
     let response;
-    if(user) {
-      response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
-        method: "DELETE",
-        headers: {
-          "authorization": "Bearer " + user.token
+    if (user) {
+      try {
+        response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+          method: "DELETE",
+          headers: {
+            authorization: "Bearer " + user.token,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
         }
-      });
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
     }
-
-    return response?.ok ? true : false;
+    return false;
   }
 
-  async function replaceAdvert(id: string, advert: AdvertDto) {
+  async function replaceAdvert(advert: Advert): Promise<boolean> {
     let response;
-    if(user) {
-      response = await fetch(baseUrl + "Advert/UpdateAdvertById/" + id, {
-        method: "PATCH",
-        headers: {
-          "content-type": "application/json",
-          "authorization": "Bearer " + user.token
-        },
-        body: JSON.stringify(advert),
-      });
+    if (user) {
+      try {
+        response = await fetch(baseUrl + "Advert/UpdateAdvert/" + advert.id, {
+          method: "PATCH",
+          headers: {
+            "content-type": "application/json",
+            authorization: "Bearer " + user.token,
+          },
+          body: JSON.stringify(advert),
+        });
 
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        } else {
+          return true;
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
     }
-
-    return response?.ok ? true : false;
+    return false;
   }
 
   function getNextAdvert(id: string): string {
