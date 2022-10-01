@@ -91,20 +91,21 @@ export default function UserProvider({ children }: Props) {
       }
     }
   }
+
   async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
-    if(user) {
-      try {
-        const response = await fetch(baseUrl + "User/GetUserById/" + userId, {
-        headers: {
-          Accept: "application/json",
-          Authorization: "Bearer " + user.token,
-        },
-      });    
-      if(response.ok) {
-        const userDetails: User = await response.json();
-        return userDetails as ContactDetails;
-      } else {
-        throw new Error(response.statusText)
+      if(user) {
+          try {
+              const response = await fetch(baseUrl + "User/GetUserById/" + userId, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: "Bearer " + user.token,
+                  },
+                });    
+                if(response.ok) {
+                    const userDetails: User = await response.json();
+                    return userDetails as ContactDetails;
+                  } else {
+                      throw new Error(response.statusText)
       }
       } catch(err) {
         console.log(err)
@@ -113,7 +114,25 @@ export default function UserProvider({ children }: Props) {
     }
     return {} as ContactDetails;
   }
-
+  
+  // async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
+  //   if(user) {
+  //     try {
+  //       const response = await GetUserById(userId, user.token);
+  //     if(response && response.status > 199 && response.status < 300) {
+  //       console.log(response.data)
+  //       const userDetails: User = response.data // ts tror att data är en string men det set ut att vara ett objekt, kanske kan vara bägge?
+  //       return userDetails as ContactDetails;
+  //     } else {
+  //       throw new Error(response?.data)
+  //     }
+  //     } catch(err) {
+  //       console.log(err)
+  //       return {} as ContactDetails;
+  //     }
+  //   }
+  //   return {} as ContactDetails;
+  // }
 
   return (
     <UserContext.Provider value={{ signIn, signUp, updateUser, user, GetContactDetailsByUserId }}>

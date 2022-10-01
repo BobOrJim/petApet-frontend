@@ -32,3 +32,8 @@ export type SignUpResponse = {
   status: string;
   message: string;
 };
+
+export type ContactDetails = {
+  email: string;
+  phoneNr: string;
+}
