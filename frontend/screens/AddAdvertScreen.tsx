@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
-import { ScrollView, StyleSheet, View, Text, BackHandler } from "react-native";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
@@ -23,29 +23,20 @@ export default function AddAdvertScreen({ navigation }: Props) {
   const onAddAdvertFailed = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   };
-
+  React.useEffect(() => {
+    return () => {
+      console.log("Unloading Sound");
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, [sound]);
   async function playSound() {
     console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync(require("../assets/dog_woof.mp3"));
     setSound(sound);
     await sound.playAsync();
-    React.useEffect(() => {
-      return () => {
-        console.log("Unloading Sound");
-        if (sound) {
-          sound.unloadAsync();
-        }
-      };
-    }, [sound]);
   }
-
-  useEffect(() => {
-    const backButtonEvent = BackHandler.addEventListener("hardwareBackPress", () => {
-      navigation.navigate("Main");
-      return true;
-    });
-    return () => backButtonEvent.remove();
-  }, []);
 
   const onAddAdvertPressed = (data: any) => {
     console.log(data);

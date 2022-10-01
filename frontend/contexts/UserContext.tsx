@@ -55,6 +55,7 @@ export default function UserProvider({ children }: Props) {
         userBuild.phoneNr = userInstance.phoneNr;
         userBuild.isLoggedIn = true;
         userBuild.profilePictureUrl = userInstance.profilePictureUrl;
+        userBuild.email = userInstance.email;
 
         console.log(user);
         setUser(userBuild);
