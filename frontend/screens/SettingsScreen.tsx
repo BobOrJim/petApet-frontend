@@ -1,20 +1,95 @@
-import { Text } from "react-native";
-export default function MainScreen() {
+// @ts-nocheck
+import { View, StyleSheet } from "react-native";
+import { Button, Card, Switch, Text } from "react-native-paper";
+import { useTheme } from "../contexts/ThemeContext";
+import ColorPicker from 'react-native-wheel-color-picker'
+import { useEffect, useState } from "react";
+
+type focusedItem = "card" | "background" | "surface";
+
+export default function SettingsScreen() {
+  const {darkmode, setDarkMode, createCustomTheme, currentTheme, usingCustomTheme, setUsingCustomTheme} = useTheme();
+  const [focusedItem, setFocusedItem] = useState<focusedItem>("card") 
+  const [customColors, setCustomColors] = useState({
+    card: currentTheme.colors.card, 
+    background: currentTheme.background,
+    surface: currentTheme.surface
+  });
+
+  useEffect(() => {
+      createCustomTheme(customColors.card, customColors.background, customColors.surface)
+    }, [customColors])
+
   return (
-    <>
-      <Text style={{ color: "#6a8a35", fontSize: 20 }}>// Settings här</Text>
-      <Text style={{ color: "#6a8a35", fontSize: 20 }}>
-        // Typ darkmode/lightmode eller mer custom{" "}
-      </Text>
-      <Text style={{ color: "#6a8a35", fontSize: 20 }}>
-        // att man får välja egna primary/secondary&tertiary colors
-      </Text>
-      <Text style={{ color: "#6a8a35", fontSize: 20 }}>
-        // antingen om denna bara är app inställningar eller om man{" "}
-      </Text>
-      <Text style={{ color: "#6a8a35", fontSize: 20 }}>
-        // även ska ändra ens konto saker här med, typ mail och telefonnummer osv
-      </Text>
-    </>
+    <View>
+      <View style={styles.switchContainer}>
+        <Text variant="titleMedium">Darkmode</Text>
+        <Switch value={darkmode} onValueChange={setDarkMode} disabled={usingCustomTheme}/>
+      </View>
+
+      <View style={styles.switchContainer}>
+        <Text variant="titleMedium">Custom theme</Text>
+        <Switch value={usingCustomTheme} onValueChange={setUsingCustomTheme} />
+      </View>
+
+      {usingCustomTheme &&
+        <Card elevation={5} style={styles.centered}>
+          <View style={styles.buttonContainer}>
+            <Button 
+              mode={focusedItem === "card" ? "contained" : "elevated"} 
+              style={{flexGrow: 1}} 
+              onPress={() => setFocusedItem("card")}
+            >
+              <Text>card</Text>
+            </Button>
+
+            <Button 
+              mode={focusedItem === "background" ? "contained" : "elevated"} 
+              style={{flexGrow: 1}} 
+              onPress={() => setFocusedItem("background")}
+            >
+              <Text>background</Text>
+            </Button>
+
+            <Button 
+              mode={focusedItem === "surface" ? "contained" : "elevated"} 
+              style={{flexGrow: 1}} 
+              onPress={() => setFocusedItem("surface")}
+            >
+              <Text>surface</Text>
+            </Button>
+          </View>
+              <ColorPicker
+                thumbSize={20}
+                sliderSize={20}
+                noSnap={true}
+                row={false}
+                swatches={false}
+                color={customColors[focusedItem]}
+                onColorChangeComplete={(color) => setCustomColors(prevState => ({...prevState, [focusedItem]: color}))}
+              />      
+          </Card>
+      }
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  switchContainer: {
+    marginHorizontal:25,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:"center"
+  },
+  centered: {
+    marginHorizontal: 10,
+    height: 310,
+    padding: 10,
+    
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+})
