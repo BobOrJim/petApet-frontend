@@ -31,13 +31,13 @@ export default function ThemeProvider({ children }: Props) {
     function createCustomTheme(card: string, background: string, surface: string){     
       setCurrentTheme(prevState => ({
             ...prevState,
-            background: background !== "" ? background : currentTheme.colors.background,
-            surface: surface !== "" ? surface : currentTheme.colors.background,
+            background: background !== "" ? background : prevState.colors.background,
+            surface: surface !== "" ? surface : prevState.colors.surface,
             colors: {
                 ...prevState.colors,
-                background: background ? background : currentTheme.colors.background,
-                surface: surface ? surface : currentTheme.colors.background,
-                card: card ? card : currentTheme.colors.background
+                background: background ? background : prevState.colors.background,
+                surface: surface ? surface : prevState.colors.surface,
+                card: card ? card : prevState.colors.card
             }
       }))
     }
