@@ -7,7 +7,7 @@ import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useAdverts } from "../contexts/AdvertContext";
-import { RootStackParamList } from "../App";
+import { RootStackParamList } from "../NavigationContainerContainer";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;

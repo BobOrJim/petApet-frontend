@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../App";
+import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
 import { useState } from "react";
 import { FlashList } from "@shopify/flash-list";
