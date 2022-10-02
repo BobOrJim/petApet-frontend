@@ -2,17 +2,19 @@ import React, { useEffect, useState } from "react";
 import * as SMS from "expo-sms";
 import * as Mail from "expo-mail-composer";
 import { View, StyleSheet } from "react-native";
-import { Button, Text } from "react-native-paper";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Button } from "react-native-paper";
+import { useUserContext } from "../../contexts/UserContext";
+import { ContactDetails } from "../../models/User";
 
-// interface Props: {
-//     userId: string;
-// }
+interface Props {
+    userId: string | undefined;
+}
 
-export default function ContactUserButton() {
+export default function ContactUserButton({ userId } : Props) {
   const [isAvailable, setIsAvailable] = useState({ text: false, mail: false });
-  // const [user, setUser] = useState<User>(undefined)
-  // const { getUserById } = useUser();
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({} as ContactDetails);
+  const {GetContactDetailsByUserId } = useUserContext();
+
   useEffect(() => {
     SMS.isAvailableAsync().then((isAvailable) =>
       setIsAvailable((prevState) => ({ ...prevState, text: isAvailable })),
@@ -20,47 +22,49 @@ export default function ContactUserButton() {
     Mail.isAvailableAsync().then((isAvailable) =>
       setIsAvailable((prevState) => ({ ...prevState, mail: isAvailable })),
     );
-    // getUserById(userId).then(user => setUser(user))
+
+    if(userId) {
+      GetContactDetailsByUserId(userId).then(res => setContactDetails(res));
+    }
+
   }, []);
 
-  function sendText() {
-    // SMS.sendSMSAsync(user.phonenumber, "")
-    SMS.sendSMSAsync("000000000", "Hejsan, ");
+  function openTextApp() {
+    SMS.sendSMSAsync(contactDetails.phoneNr, "Hejsan, ");
   }
 
-  function sendMail() {
+  function openMailApp() {
     Mail.composeAsync({
-      // recipients: [user.mail]
-      recipients: ["placeholder@asd.com"],
+      recipients: [contactDetails.email],
       subject: "Hejsan",
     });
   }
+
   return (
     <View style={styles.buttonContainer}>
-      {isAvailable.text && (
-        <Button style={styles.button} onPress={sendText}>
-          <Text>
-            sms <Ionicons name={"exit-outline"} size={17} />
-          </Text>
+      {isAvailable.text && contactDetails.phoneNr && 
+        <Button style={styles.button} onPress={openTextApp} mode="contained-tonal" icon="exit-to-app" >
+            sms 
         </Button>
-      )}
-      {isAvailable.mail && (
-        <Button style={styles.button} onPress={sendMail}>
-          <Text>
-            mail <Ionicons name={"exit-outline"} size={17} />
-          </Text>
+      }
+      {isAvailable.mail && contactDetails.email && 
+        <Button style={styles.button} onPress={openMailApp} mode="contained-tonal" icon="exit-to-app">
+            mail 
         </Button>
-      )}
+      }
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    height: 50,
     flexDirection: "row",
+    marginTop: 5
   },
   button: {
-    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexGrow: 1,
   },
 });
