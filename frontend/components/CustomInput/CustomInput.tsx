@@ -10,6 +10,7 @@ const CustomInput = ({
   secureTextEntry,
   maxLength,
   keyboardType,
+  defaultValue = ""
 }: any) => {
   return (
     <Controller
@@ -20,6 +21,7 @@ const CustomInput = ({
         <>
           <View style={[styles.container, { borderColor: error ? "red" : "#e8e8e8" }]}>
             <TextInput
+              defaultValue={defaultValue}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}

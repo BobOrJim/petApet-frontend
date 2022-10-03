@@ -13,6 +13,7 @@ import AddAdvertScreen from "./screens/AddAdvertScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "./contexts/ThemeContext";
+import { useUserContext } from "./contexts/UserContext";
 
 export type RootStackParamList = {
   Main: undefined;
@@ -26,7 +27,7 @@ export type RootStackParamList = {
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
 export default function NavigationContainerContainer() {
       const { currentTheme, darkmode } = useTheme();
-      const {colors} = getColors(); 
+      const { user } = useUserContext();
     return (
         <PaperProvider theme={currentTheme}>
               <SafeAreaProvider>
@@ -42,7 +43,7 @@ export default function NavigationContainerContainer() {
                           </Pressable>
                         ),
                         headerRight: (props) => (
-                          <Ionicons {...props} name={"person"} onPress={() => navigation.navigate("User")} color={darkmode ? "white" : "black"}/>
+                          <Ionicons {...props} name={"person"} onPress={() => navigation.navigate(user ? "User" : "SignIn")} color={darkmode ? "white" : "black"}/>
                           ),
                         })}
                         />

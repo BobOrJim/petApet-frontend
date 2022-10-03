@@ -10,7 +10,7 @@ import { useAdverts } from "../contexts/AdvertContext";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;
+export const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;
 const NUMBER_REGEX = /^[0-9]*$/;
 const LETTER_REGEX = /^[A-Öa-ö\s]+$/;
 
