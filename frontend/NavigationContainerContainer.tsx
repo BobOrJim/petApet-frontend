@@ -27,71 +27,34 @@ export type RootStackParamList = {
 const NativeStack = createNativeStackNavigator<RootStackParamList>();
 export default function NavigationContainerContainer() {
   const { currentTheme, darkmode } = useTheme();
+  const themeColor = darkmode ? "white" : "black";
   const { user } = useUserContext();
   return (
     <PaperProvider theme={currentTheme}>
       <SafeAreaProvider>
         <NavigationContainer theme={currentTheme}>
           <NativeStack.Navigator initialRouteName='Main'>
-            {user?.isLoggedIn ? (
-              <NativeStack.Screen
-                name='Main'
-                component={MainScreen}
-                options={({ navigation }) => ({
-                  headerLeft: () => (
-                    <Pressable onPress={() => navigation.navigate("SignIn")}>
-                      <Text>{user?.alias}</Text>
-                    </Pressable>
-                  ),
-                  headerRight: (props) => (
-                    <Ionicons
-                      {...props}
-                      size={20}
-                      name={"person"}
-                      onPress={() => navigation.navigate(user ? "User" : "SignIn")}
-                      color={darkmode ? "white" : "black"}
-                    />
-                  ),
-                })}
-              />
-            ) : (
-              <NativeStack.Screen
-                name='Main'
-                component={MainScreen}
-                options={({ navigation }) => ({
-                  headerLeft: () => (
-                    <Pressable onPress={() => navigation.navigate("SignIn")}>
-                      <Text>Signin</Text>
-                    </Pressable>
-                  ),
-                  headerRight: (props) => (
-                    <Ionicons
-                      {...props}
-                      size={20}
-                      name={"person"}
-                      onPress={() => navigation.navigate(user ? "User" : "SignIn")}
-                      color={darkmode ? "white" : "black"}
-                    />
-                  ),
-                })}
-              />
-            )}
-
             <NativeStack.Screen
-              name='User'
-              component={UserScreen}
+              name='Main'
+              component={MainScreen}
               options={({ navigation }) => ({
+                title:"",
+                headerLeft: () => (
+                  <Pressable onPress={() => navigation.navigate(user ? "User" : "SignIn")}>
+                    <Text style={{ color: themeColor, fontWeight: "500" }}>{user ? user.alias : "Sign in"}</Text>
+                  </Pressable>
+                ),
                 headerRight: (props) => (
                   <Ionicons
-                    {...props}
+                    color={themeColor}
                     size={20}
                     name={"cog"}
                     onPress={() => navigation.navigate("Settings")}
-                    color={darkmode ? "white" : "black"}
                   />
                 ),
               })}
-            />
+            />        
+            <NativeStack.Screen name='User' component={UserScreen} options={({}) => ({title: user?.alias})}/>
             <NativeStack.Screen name='Settings' component={SettingsScreen} />
             <NativeStack.Screen name='SignIn' component={SignInScreen} />
             <NativeStack.Screen name='SignUp' component={SignUpScreen} />
@@ -101,10 +64,14 @@ export default function NavigationContainerContainer() {
               component={AdvertDetailsScreen}
               options={({ navigation }) => ({
                 animation: "slide_from_right",
-                headerTitle: () => (
-                  <Pressable onPress={() => navigation.navigate("Main")}>
-                    <Text>Main</Text>
-                  </Pressable>
+                title:"",
+                headerLeft: () => (
+                  <Ionicons
+                    color={themeColor}
+                    size={20}
+                    name={"arrow-back"}
+                    onPress={() => navigation.navigate("Main")}
+                  />
                 ),
               })}
             />
