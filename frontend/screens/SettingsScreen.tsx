@@ -3,28 +3,21 @@ import { View, StyleSheet } from "react-native";
 import { Button, Card, Switch, Text } from "react-native-paper";
 import { useTheme } from "../contexts/ThemeContext";
 import ColorPicker from 'react-native-wheel-color-picker'
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 
 type focusedItem = "card" | "background" | "surface";
 
 export default function SettingsScreen() {
-  const {darkmode, setDarkMode, createCustomTheme, currentTheme, usingCustomTheme, setUsingCustomTheme} = useTheme();
+  const {darkmode, setDarkmode, customColors, setCustomColors, usingCustomTheme, setUsingCustomTheme} = useTheme();
   const [focusedItem, setFocusedItem] = useState<focusedItem>("card") 
-  const [customColors, setCustomColors] = useState({
-    card: currentTheme.colors.card, 
-    background: currentTheme.background,
-    surface: currentTheme.surface
-  });
-
-  useEffect(() => {
-      createCustomTheme(customColors.card, customColors.background, customColors.surface)
-    }, [customColors])
 
   return (
     <View>
+      <Button onPress={() => console.log(customColors)}><Text>Log custom colors!</Text></Button>
       <View style={styles.switchContainer}>
         <Text variant="titleMedium">Darkmode</Text>
-        <Switch value={darkmode} onValueChange={setDarkMode} disabled={usingCustomTheme}/>
+        <Switch value={darkmode} onValueChange={setDarkmode} disabled={usingCustomTheme}/>
       </View>
 
       <View style={styles.switchContainer}>
