@@ -17,7 +17,7 @@ interface Props {
 
 interface IUserContext {
   signIn: (signInDto: SignInDto) => Promise<boolean>;
-  signUp: (SignUpDto: SignUpDto) => void;
+  signUp: (SignUpDto: SignUpDto) => Promise<boolean>;
   updateUser: (userToUpdate: User) => Promise<void>;
   GetContactDetailsByUserId: (id: string) => Promise<ContactDetails>;
   user: User | undefined;
@@ -70,21 +70,22 @@ export default function UserProvider({ children }: Props) {
     }
   }
 
-  function signUp(signUpDto: SignUpDto) {
-    (async () => {
+  async function signUp(signUpDto: SignUpDto) {
+    {
       const httpRespons: HttpRespons | null = await PostSignUp(signUpDto);
       try {
         if (httpRespons == null || httpRespons.status != 200) {
           throw new Error("Httprequest to get token failed");
         }
-
         const signUpResponse: SignUpResponse = JSON.parse(JSON.stringify(httpRespons.data));
         console.log("signUpResponse.status= " + signUpResponse.status);
         console.log("signUpResponse.status= " + signUpResponse.message);
+        return true;
       } catch (error) {
         console.log("Error in signUp: ", error);
+        return false;
       }
-    })();
+    }
   }
 
   async function updateUser(userToUpdate: User) {

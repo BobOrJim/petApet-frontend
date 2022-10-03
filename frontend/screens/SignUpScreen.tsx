@@ -23,10 +23,21 @@ export default function SignUpScreen({ navigation }: Props) {
   const onRegisterFailed = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   };
-  const onRegisterPressed = (data: any) => {
-    navigation.navigate("User");
-    console.log(data);
-    signUp({ username: data.username, email: data.email, password: data.password });
+  const onRegisterPressed = async (data: any) => {
+    const result = await signUp({
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    });
+    if (result) {
+      navigation.navigate("SignIn");
+      console.log(data);
+    } else {
+      alert(
+        "Password too weak. \nRequires a number.\nMinimum length: 6.\nOne lowcase char & one uppercase char.",
+      );
+      return;
+    }
   };
 
   return (
