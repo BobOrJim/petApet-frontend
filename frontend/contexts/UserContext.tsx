@@ -1,5 +1,12 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { SignInDto, SignUpDto, TokenType, SignUpResponse, User, ContactDetails } from "../models/User";
+import {
+  SignInDto,
+  SignUpDto,
+  TokenType,
+  SignUpResponse,
+  User,
+  ContactDetails,
+} from "../models/User";
 import axios from "axios";
 //import { Advert } from "../models/Advert";
 import { HttpRespons } from "../models/HttpTypes";
@@ -9,7 +16,7 @@ interface Props {
 }
 
 interface IUserContext {
-  signIn: (signInDto: SignInDto) => void;
+  signIn: (signInDto: SignInDto) => Promise<boolean>;
   signUp: (SignUpDto: SignUpDto) => void;
   updateUser: (userToUpdate: User) => Promise<void>;
   GetContactDetailsByUserId: (id: string) => Promise<ContactDetails>;
@@ -22,47 +29,45 @@ const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 export default function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User | undefined>(undefined);
 
-  function signIn(signInDto: SignInDto) {
-    (async () => {
-      const httpRespons_PostSignIn: HttpRespons | null = await PostSignIn(signInDto);
-      console.log(httpRespons_PostSignIn);
-      try {
-        if (httpRespons_PostSignIn == null || httpRespons_PostSignIn.status != 200) {
-          throw new Error("Httprequest to get token failed");
-        }
-
-        //Login sussessfull. Try to build User entity.
-        const userBuild: User = {} as User;
-        //Step 1/3. Build props from the login data (User input)
-        const tokenInstance: TokenType = JSON.parse(JSON.stringify(httpRespons_PostSignIn.data));
-        userBuild.username = signInDto.username;
-        userBuild.password = signInDto.password;
-        //Step 2/3. Build props from the token (generated in AuthController)
-        userBuild.token = tokenInstance.token;
-        userBuild.expiration = tokenInstance.expiration;
-        userBuild.authId = tokenInstance.authUserId;
-        userBuild.id = tokenInstance.userId;
-        //Step 3/3. Build props from UserController (from puppyDb, User table)
-        const httpRespons_GetUserById: HttpRespons | null = await GetUserById(
-          userBuild.id,
-          userBuild.token,
-        );
-        if (httpRespons_GetUserById == null || httpRespons_GetUserById.status != 200) {
-          throw new Error("Httprequest to GetUserById failed");
-        }
-        const userInstance: User = JSON.parse(JSON.stringify(httpRespons_GetUserById.data));
-        userBuild.alias = userInstance.alias;
-        userBuild.phoneNr = userInstance.phoneNr;
-        userBuild.isLoggedIn = true;
-        userBuild.profilePictureUrl = userInstance.profilePictureUrl;
-        userBuild.email = userInstance.email;
-
-        console.log(user);
-        setUser(userBuild);
-      } catch (error) {
-        console.log("Error in signIn: ", error);
+  async function signIn(signInDto: SignInDto) {
+    const httpRespons_PostSignIn: HttpRespons | null = await PostSignIn(signInDto);
+    try {
+      if (httpRespons_PostSignIn == null || httpRespons_PostSignIn.status != 200) {
+        throw new Error("Httprequest to get token failed");
       }
-    })();
+
+      //Login sussessfull. Try to build User entity.
+      const userBuild: User = {} as User;
+      //Step 1/3. Build props from the login data (User input)
+      const tokenInstance: TokenType = JSON.parse(JSON.stringify(httpRespons_PostSignIn.data));
+      userBuild.username = signInDto.username;
+      userBuild.password = signInDto.password;
+      //Step 2/3. Build props from the token (generated in AuthController)
+      userBuild.token = tokenInstance.token;
+      userBuild.expiration = tokenInstance.expiration;
+      userBuild.authId = tokenInstance.authUserId;
+      userBuild.id = tokenInstance.userId;
+      //Step 3/3. Build props from UserController (from puppyDb, User table)
+      const httpRespons_GetUserById: HttpRespons | null = await GetUserById(
+        userBuild.id,
+        userBuild.token,
+      );
+      if (httpRespons_GetUserById == null || httpRespons_GetUserById.status != 200) {
+        throw new Error("Httprequest to GetUserById failed");
+      }
+      const userInstance: User = JSON.parse(JSON.stringify(httpRespons_GetUserById.data));
+      userBuild.alias = userInstance.alias;
+      userBuild.phoneNr = userInstance.phoneNr;
+      userBuild.isLoggedIn = true;
+      userBuild.profilePictureUrl = userInstance.profilePictureUrl;
+      userBuild.email = userInstance.email;
+
+      setUser(userBuild);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 
   function signUp(signUpDto: SignUpDto) {
@@ -93,28 +98,27 @@ export default function UserProvider({ children }: Props) {
   }
 
   async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
-      if(user) {
-          try {
-              const response = await fetch(baseUrl + "User/GetUserById/" + userId, {
-                headers: {
-                    Accept: "application/json",
-                    Authorization: "Bearer " + user.token,
-                  },
-                });    
-                if(response.ok) {
-                    const userDetails: User = await response.json();
-                    return userDetails as ContactDetails;
-                  } else {
-                      throw new Error(response.statusText)
-      }
-      } catch(err) {
-        console.log(err)
+    if (user) {
+      try {
+        const response = await fetch(baseUrl + "User/GetUserById/" + userId, {
+          headers: {
+            Accept: "application/json",
+            Authorization: "Bearer " + user.token,
+          },
+        });
+        if (response.ok) {
+          const userDetails: User = await response.json();
+          return userDetails as ContactDetails;
+        } else {
+          throw new Error(response.statusText);
+        }
+      } catch (err) {
         return {} as ContactDetails;
       }
     }
     return {} as ContactDetails;
   }
-  
+
   // async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
   //   if(user) {
   //     try {
@@ -219,8 +223,6 @@ const PatchUser = async (user: User, token: string): Promise<void> => {
     }
   }
 };
-
-
 
 /*
 const PostAdvert = async (advert: Advert, token: string): Promise<any> => {

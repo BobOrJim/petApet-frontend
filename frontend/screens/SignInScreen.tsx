@@ -18,8 +18,7 @@ export default function SignInScreen({ navigation }: Props) {
     handleSubmit,
     formState: {},
   } = useForm();
-  const { signIn } = useUserContext();
-
+  const { signIn, user } = useUserContext();
   const onLoginFailedHaptic = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   };
@@ -29,11 +28,14 @@ export default function SignInScreen({ navigation }: Props) {
     Speech.speak(thingToSay);
   };
 
-  const onSignInPressed = (data: any) => {
-    navigation.navigate("Main");
-    console.log(data);
-    signIn({ username: data.username, password: data.password });
-    speak(data.username);
+  const onSignInPressed = async (data: any) => {
+    const result = await signIn({ username: data.username, password: data.password });
+    if (result) {
+      navigation.navigate("Main");
+      speak(data.username);
+    } else {
+      return;
+    }
   };
   const onPressCreateAccount = () => {
     navigation.navigate("SignUp");
