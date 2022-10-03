@@ -18,8 +18,10 @@ interface Props {
 interface IUserContext {
   signIn: (signInDto: SignInDto) => Promise<boolean>;
   signUp: (SignUpDto: SignUpDto) => Promise<boolean>;
-  updateUser: (userToUpdate: User) => Promise<void>;
+  updateUser: (userToUpdate: User) => Promise<boolean>;
   GetContactDetailsByUserId: (id: string) => Promise<ContactDetails>;
+  DeleteLoggedInUser: () => Promise<boolean>;
+  LogOutUser: () => Promise<boolean>;
   user: User | undefined;
 }
 const UserContext = createContext<IUserContext>({} as IUserContext);
@@ -88,14 +90,18 @@ export default function UserProvider({ children }: Props) {
     }
   }
 
-  async function updateUser(userToUpdate: User) {
-    if (userToUpdate.isLoggedIn) {
+  async function updateUser(userToUpdate: User): Promise<boolean> {
+    if (userToUpdate) {
       try {
-        await PatchUser(userToUpdate, userToUpdate.token);
+        const response = await PatchUser(userToUpdate, userToUpdate.token);
+        if(response) {
+          return true;
+        }
       } catch (error) {
         console.log("Error in updateUser: ", error);
       }
     }
+    return false;
   }
 
   async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
@@ -120,27 +126,43 @@ export default function UserProvider({ children }: Props) {
     return {} as ContactDetails;
   }
 
-  // async function GetContactDetailsByUserId(userId: string): Promise<ContactDetails> {
-  //   if(user) {
-  //     try {
-  //       const response = await GetUserById(userId, user.token);
-  //     if(response && response.status > 199 && response.status < 300) {
-  //       console.log(response.data)
-  //       const userDetails: User = response.data // ts tror att data är en string men det set ut att vara ett objekt, kanske kan vara bägge?
-  //       return userDetails as ContactDetails;
-  //     } else {
-  //       throw new Error(response?.data)
-  //     }
-  //     } catch(err) {
-  //       console.log(err)
-  //       return {} as ContactDetails;
-  //     }
-  //   }
-  //   return {} as ContactDetails;
-  // }
+  async function DeleteLoggedInUser(): Promise<boolean> {
+    if(user) {
+      try {
+        const response = await fetch(baseUrl + "User/DeleteUserById/" + user.id, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + user.token,
+          }
+        });
+        if(response.ok) {
+          setUser(undefined);
+          return true;
+        } else {
+          throw new Error(response.statusText);
+        }
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    }
+    return false;
+    
+  }
+
+  async function LogOutUser(): Promise<boolean> {
+    if(user) {
+      const response = await updateUser({...user, isLoggedIn: false })
+      if(response) {
+        setUser(undefined);
+        return true
+      }
+    }
+    return false;
+  }
 
   return (
-    <UserContext.Provider value={{ signIn, signUp, updateUser, user, GetContactDetailsByUserId }}>
+    <UserContext.Provider value={{ signIn, signUp, updateUser, user, GetContactDetailsByUserId, DeleteLoggedInUser, LogOutUser }}>
       {children}
     </UserContext.Provider>
   );
@@ -208,14 +230,17 @@ const GetUserById = async (userId: string, token: string): Promise<HttpRespons |
   }
 };
 
-const PatchUser = async (user: User, token: string): Promise<void> => {
+const PatchUser = async (user: User, token: string): Promise<boolean> => {
   try {
-    await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
+    const response = await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
       headers: {
         Accept: "application/json",
         Authorization: "Bearer " + token,
       },
     });
+    if(response.status > 199 && response.status < 300) {
+      return true;
+    }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("Axios error : ", error.message);
@@ -223,6 +248,7 @@ const PatchUser = async (user: User, token: string): Promise<void> => {
       console.log("unexpected error: ", error);
     }
   }
+  return false;
 };
 
 /*
