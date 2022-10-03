@@ -7,11 +7,12 @@ import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 import { User } from "../models/User";
 import { IMGURL_REGEX } from "./AddAdvertScreen";
+import { EMAIL_REGEX } from "./SignUpScreen";
 
 
 
 export default function UserScreen() {
-  const { user, updateUser } = useUserContext();
+  const { user, updateUser, DeleteLoggedInUser, LogOutUser } = useUserContext();
   const [editMode, setEditMode] = useState(false);
   const { control, handleSubmit } = useForm<User>({});
   
@@ -23,23 +24,28 @@ export default function UserScreen() {
         ...user, 
         phoneNr: data.phoneNr ? data.phoneNr : user.phoneNr,
         profilePictureUrl: data.profilePictureUrl ? data.profilePictureUrl : user.profilePictureUrl,
-        alias: data.alias ? data.alias : user.alias
+        alias: data.alias ? data.alias : user.alias,
+        contactEmail: data.contactEmail ? data.contactEmail : user.contactEmail
       })
-
-      console.log(result) // hade gärna fått en bool här 
     }
   }
 
+  async function deleteAccount() {
+    const result = await DeleteLoggedInUser();
+  }
+
+  async function handleLogOut() {
+    const result = await LogOutUser();
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container, justifyContent: editMode ? "space-between" : "space-evenly"}}>
         <Image style={styles.profilePicture} source={{uri: user?.profilePictureUrl ? user?.profilePictureUrl : "https://www.pngkey.com/png/full/73-730477_first-name-profile-image-placeholder-png.png"}} />
         {
         editMode ?
         <View>
-          <Title>EditMode: True</Title>
           <CustomInput
             defaultValue={user?.alias}
-            value={user?.alias}
             name='Alias'
             placeholder='Alias'
             control={control}
@@ -55,12 +61,21 @@ export default function UserScreen() {
             defaultValue={user?.phoneNr}
             name='phoneNr'
             placeholder='Phone number'
-            value={user?.phoneNr}
             control={control}
             keyboardType={"numeric"}
             rules={{
               required: "Phone number is required",
               pattern: { value: /^[+]?\d{8,12}$/, message: "Must be valid phone number" },
+            }}
+          />
+          <CustomInput
+            defaultValue={user?.contactEmail}
+            name='email'
+            placeholder='Email'
+            control={control}
+            keyboardType={"default"}
+            rules={{
+              pattern: { value: EMAIL_REGEX, message: "Must be a valid email adress" },
             }}
           />
           <CustomInput
@@ -82,16 +97,25 @@ export default function UserScreen() {
             <CustomButton
               text='Discard changes'
               bgColor="#c50f1f"
-              onPress={handleSubmit(onSubmit)}
+              onPress={() => setEditMode(false)}
             />
           </View>
         </View>
         :
-        <View><Title>Info här</Title></View>
+        <View>
+          <Title>{user?.alias}</Title>
+          {user?.contactEmail && <Text variant="titleSmall">Email: {user?.email}</Text>}
+          {user?.phoneNr && <Text variant="titleSmall">Phone number: {user?.phoneNr}</Text>}
+          <Text variant="titleSmall">Email: legit@mail.se</Text>
+        </View>
         }
 
         <View style={styles.buttonContainer}>
-          <Button mode="contained" buttonColor="#c50f1f">Delete account</Button>
+          {editMode ?
+            <Button mode="contained" buttonColor="#c50f1f" onPress={deleteAccount}>Delete account</Button>
+          :
+            <Button mode="contained" buttonColor="#d0a753" onPress={handleLogOut}>Logout</Button>
+          }
           <Button mode="contained" onPress={() => setEditMode(prevState => !prevState)}>Edit profile</Button>
         </View>
     </View>
@@ -102,7 +126,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginTop: 10,
-    justifyContent: "space-between",
     height: "95%",
     width: "95%",
     marginLeft: "auto",
