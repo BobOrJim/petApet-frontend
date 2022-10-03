@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
-import { ScrollView, StyleSheet, View, Text } from "react-native";
+import { ScrollView, StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
@@ -53,108 +53,115 @@ export default function AddAdvertScreen({ navigation }: Props) {
   } = useForm();
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <DisplayAnImage></DisplayAnImage>
-        <Text style={{ fontSize: 20 }}>Add Advert</Text>
-        <CustomInput
-          name='name'
-          label='Name'
-          placeholder='Pet name'
-          control={control}
-          keyboardType={"default"}
-          rules={{
-            required: "Pet name is required",
-            pattern: { value: LETTER_REGEX, message: "Must be letters" },
-          }}
-        />
-        <CustomInput
-          name='age'
-          placeholder='Age'
-          control={control}
-          maxLength={2}
-          keyboardType={"numeric"}
-          rules={{
-            required: "Age is required",
-            pattern: { value: NUMBER_REGEX, message: "Must be a number" },
-            maxLength: {
-              value: 2,
-              message: "Cannot be longer than two numbers",
-            },
-          }}
-        />
-        <CustomInput
-          name='race'
-          placeholder='Race'
-          control={control}
-          keyboardType={"default"}
-          rules={{
-            required: "Race is required",
-            minLength: {
-              message: "Must be longer than 0",
-            },
-            pattern: { value: LETTER_REGEX, message: "Must be letters" },
-          }}
-        />
-        <CustomInput
-          name='sex'
-          placeholder='Sex'
-          control={control}
-          keyboardType={"default"}
-          rules={{
-            required: "Sex is required",
-            minLength: {
-              value: 1,
-              message: "Must be longer than 0",
-            },
-            pattern: { value: LETTER_REGEX, message: "Must be letters" },
-          }}
-        />
-        <CustomInput
-          name='personallity'
-          placeholder='Personality'
-          keyboardType={"default"}
-          control={control}
-          rules={{
-            required: "Personality is required",
-            maxLength: { value: 100, message: "Max 100 letters" },
-            pattern: { value: LETTER_REGEX, message: "Must be letters" },
-          }}
-        />
-        <CustomInput
-          name='rentperiod'
-          placeholder='Rent Period'
-          maxLength={2}
-          control={control}
-          type='number'
-          keyboardType={"numeric"}
-          rules={{
-            maxLength: {
-              value: 2,
-              message: "Cannot be longer than two numbers",
-            },
-            required: "Rent period is required",
-            pattern: { value: NUMBER_REGEX, message: "Must be a number" },
-          }}
-        />
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={Platform.OS === "ios" ? 56 : 0}
+      behavior='padding'
+      style={{ flex: 1 }}
+      enabled
+    >
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <DisplayAnImage></DisplayAnImage>
+          <Text style={{ fontSize: 20 }}>Add Advert</Text>
+          <CustomInput
+            name='name'
+            label='Name'
+            placeholder='Pet name'
+            control={control}
+            keyboardType={"default"}
+            rules={{
+              required: "Pet name is required",
+              pattern: { value: LETTER_REGEX, message: "Must be letters" },
+            }}
+          />
+          <CustomInput
+            name='age'
+            placeholder='Age'
+            control={control}
+            maxLength={2}
+            keyboardType={"numeric"}
+            rules={{
+              required: "Age is required",
+              pattern: { value: NUMBER_REGEX, message: "Must be a number" },
+              maxLength: {
+                value: 2,
+                message: "Cannot be longer than two numbers",
+              },
+            }}
+          />
+          <CustomInput
+            name='race'
+            placeholder='Race'
+            control={control}
+            keyboardType={"default"}
+            rules={{
+              required: "Race is required",
+              minLength: {
+                message: "Must be longer than 0",
+              },
+              pattern: { value: LETTER_REGEX, message: "Must be letters" },
+            }}
+          />
+          <CustomInput
+            name='sex'
+            placeholder='Sex'
+            control={control}
+            keyboardType={"default"}
+            rules={{
+              required: "Sex is required",
+              minLength: {
+                value: 1,
+                message: "Must be longer than 0",
+              },
+              pattern: { value: LETTER_REGEX, message: "Must be letters" },
+            }}
+          />
+          <CustomInput
+            name='personallity'
+            placeholder='Personality'
+            keyboardType={"default"}
+            control={control}
+            rules={{
+              required: "Personality is required",
+              maxLength: { value: 100, message: "Max 100 letters" },
+              pattern: { value: LETTER_REGEX, message: "Must be letters" },
+            }}
+          />
+          <CustomInput
+            name='rentperiod'
+            placeholder='Rent Period'
+            maxLength={2}
+            control={control}
+            type='number'
+            keyboardType={"numeric"}
+            rules={{
+              maxLength: {
+                value: 2,
+                message: "Cannot be longer than two numbers",
+              },
+              required: "Rent period is required",
+              pattern: { value: NUMBER_REGEX, message: "Must be a number" },
+            }}
+          />
 
-        <CustomInput
-          name='imageUrls'
-          placeholder='ImageUrls'
-          keyboardType={"url"}
-          control={control}
-          rules={{
-            required: "Url is required",
-            pattern: { value: IMGURL_REGEX, message: "Must be a valid url adress" },
-            maxLength: { value: 300, message: "Too long url" },
-          }}
-        />
-        <CustomButton
-          text='Add advert'
-          onPress={handleSubmit(onAddAdvertPressed, onAddAdvertFailed)}
-        />
-      </View>
-    </ScrollView>
+          <CustomInput
+            name='imageUrls'
+            placeholder='ImageUrls'
+            keyboardType={"url"}
+            control={control}
+            rules={{
+              required: "Url is required",
+              pattern: { value: IMGURL_REGEX, message: "Must be a valid url adress" },
+              maxLength: { value: 300, message: "Too long url" },
+            }}
+          />
+          <CustomButton
+            text='Add advert'
+            onPress={handleSubmit(onAddAdvertPressed, onAddAdvertFailed)}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 const styles = StyleSheet.create({
