@@ -9,6 +9,7 @@ import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
+import Ios_extraKeyboardPadding from "../components/Ios_extraKeyboardPadding";
 
 type Props = NativeStackScreenProps<RootStackParamList>;
 
@@ -42,40 +43,42 @@ export default function SignInScreen({ navigation }: Props) {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <DisplayAnImage></DisplayAnImage>
-        <CustomInput
-          name='username'
-          placeholder='Username'
-          control={control}
-          rules={{ required: "Username is required" }}
-        />
-        <CustomInput
-          name='password'
-          placeholder='Password'
-          control={control}
-          rules={{
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password should be minimum 8 characters long",
-            },
-          }}
-          secureTextEntry
-        />
-        <CustomButton
-          text='Login to Pet@Pet'
-          onPress={handleSubmit(onSignInPressed, onLoginFailedHaptic)}
-        />
-        <CustomButton
-          text='Dont have an account? Create one'
-          onPress={onPressCreateAccount}
-          bgColor='#FFFFFF'
-          fgColor='#000000'
-        />
-      </View>
-    </ScrollView>
+    <Ios_extraKeyboardPadding>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <DisplayAnImage></DisplayAnImage>
+          <CustomInput
+            name='username'
+            placeholder='Username'
+            control={control}
+            rules={{ required: "Username is required" }}
+          />
+          <CustomInput
+            name='password'
+            placeholder='Password'
+            control={control}
+            rules={{
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password should be minimum 8 characters long",
+              },
+            }}
+            secureTextEntry
+          />
+          <CustomButton
+            text='Login to Pet@Pet'
+            onPress={handleSubmit(onSignInPressed, onLoginFailedHaptic)}
+          />
+          <CustomButton
+            text='Dont have an account? Create one'
+            onPress={onPressCreateAccount}
+            bgColor='#FFFFFF'
+            fgColor='#000000'
+          />
+        </View>
+      </ScrollView>
+    </Ios_extraKeyboardPadding>
   );
 }
 const styles = StyleSheet.create({

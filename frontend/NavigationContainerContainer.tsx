@@ -84,6 +84,7 @@ export default function NavigationContainerContainer() {
                 headerRight: (props) => (
                   <Ionicons
                     {...props}
+                    size={20}
                     name={"cog"}
                     onPress={() => navigation.navigate("Settings")}
                     color={darkmode ? "white" : "black"}
