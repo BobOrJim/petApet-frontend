@@ -59,6 +59,7 @@ export default function AddAdvertScreen({ navigation }: Props) {
         <Text style={{ fontSize: 20 }}>Add Advert</Text>
         <CustomInput
           name='name'
+          label='Name'
           placeholder='Pet name'
           control={control}
           keyboardType={"default"}
