@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
-import { ScrollView, StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
+import { ScrollView, StyleSheet, View, Text } from "react-native";
 import CustomButton from "../components/CustomButton/CustomButton";
 import DisplayAnImage from "../components/CustomButton/DisplayAnImage";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useAdverts } from "../contexts/AdvertContext";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import Ios_extraKeyboardPadding from "../components/Ios_extraKeyboardPadding";
 
 export const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;
 const NUMBER_REGEX = /^[0-9]*$/;
@@ -53,12 +54,7 @@ export default function AddAdvertScreen({ navigation }: Props) {
   } = useForm();
 
   return (
-    <KeyboardAvoidingView
-      keyboardVerticalOffset={Platform.OS === "ios" ? 56 : 0}
-      behavior='padding'
-      style={{ flex: 1 }}
-      enabled
-    >
+    <Ios_extraKeyboardPadding>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <DisplayAnImage></DisplayAnImage>
@@ -161,7 +157,7 @@ export default function AddAdvertScreen({ navigation }: Props) {
           />
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </Ios_extraKeyboardPadding>
   );
 }
 const styles = StyleSheet.create({
