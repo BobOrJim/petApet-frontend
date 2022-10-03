@@ -36,7 +36,7 @@ export default function ThemeProvider({ children }: Props) {
       background: "#fff",
       surface: "#fff"
     });
-    
+
     useEffect(() => {
         if(!usingCustomTheme){
           setCurrentTheme(darkmode ? StandardDarkTheme : StandardLightTheme)
@@ -44,7 +44,7 @@ export default function ThemeProvider({ children }: Props) {
     }, [darkmode, usingCustomTheme])
 
     useEffect(() => {
-      if(customColors !== undefined) {
+      if(usingCustomTheme && customColors !== undefined) {
         setCurrentTheme(prevState => ({
               ...prevState,
               colors: {
