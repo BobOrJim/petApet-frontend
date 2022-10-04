@@ -61,7 +61,6 @@ export default function AddAdvertScreen({ navigation }: Props) {
           <Text style={{ fontSize: 20 }}>Add Advert</Text>
           <CustomInput
             name='name'
-            label='Name'
             placeholder='Pet name'
             control={control}
             keyboardType={"default"}
@@ -93,6 +92,7 @@ export default function AddAdvertScreen({ navigation }: Props) {
             rules={{
               required: "Race is required",
               minLength: {
+                value: 2,
                 message: "Must be longer than 0",
               },
               pattern: { value: LETTER_REGEX, message: "Must be letters" },
@@ -128,7 +128,6 @@ export default function AddAdvertScreen({ navigation }: Props) {
             placeholder='Rent Period'
             maxLength={2}
             control={control}
-            type='number'
             keyboardType={"numeric"}
             rules={{
               maxLength: {

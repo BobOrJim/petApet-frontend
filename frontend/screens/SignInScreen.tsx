@@ -61,8 +61,8 @@ export default function SignInScreen({ navigation }: Props) {
             rules={{
               required: "Password is required",
               minLength: {
-                value: 8,
-                message: "Password should be minimum 8 characters long",
+                value: 6,
+                message: "Password should be minimum 6 characters long",
               },
             }}
             secureTextEntry

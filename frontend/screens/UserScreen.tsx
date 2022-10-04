@@ -9,24 +9,21 @@ import { User } from "../models/User";
 import { IMGURL_REGEX } from "./AddAdvertScreen";
 import { EMAIL_REGEX } from "./SignUpScreen";
 
-
-
 export default function UserScreen() {
   const { user, updateUser, DeleteLoggedInUser, LogOutUser } = useUserContext();
   const [editMode, setEditMode] = useState(false);
-  const { control, handleSubmit } = useForm<User>({});
-  
+  const { control, handleSubmit } = useForm<any>({});
 
-  async function onSubmit(data: User){
-    console.log(data)
-    if(user) {
+  async function onSubmit(data: User) {
+    console.log(data);
+    if (user) {
       const result = await updateUser({
-        ...user, 
+        ...user,
         phoneNr: data.phoneNr ? data.phoneNr : user.phoneNr,
         profilePictureUrl: data.profilePictureUrl ? data.profilePictureUrl : user.profilePictureUrl,
         alias: data.alias ? data.alias : user.alias,
-        contactEmail: data.contactEmail ? data.contactEmail : user.contactEmail
-      })
+        contactEmail: data.contactEmail ? data.contactEmail : user.contactEmail,
+      });
     }
   }
 
@@ -39,10 +36,18 @@ export default function UserScreen() {
   }
 
   return (
-    <View style={{...styles.container, justifyContent: editMode ? "space-between" : "space-evenly"}}>
-        <Image style={styles.profilePicture} source={{uri: user?.profilePictureUrl ? user?.profilePictureUrl : "https://www.pngkey.com/png/full/73-730477_first-name-profile-image-placeholder-png.png"}} />
-        {
-        editMode ?
+    <View
+      style={{ ...styles.container, justifyContent: editMode ? "space-between" : "space-evenly" }}
+    >
+      <Image
+        style={styles.profilePicture}
+        source={{
+          uri: user?.profilePictureUrl
+            ? user?.profilePictureUrl
+            : "https://www.pngkey.com/png/full/73-730477_first-name-profile-image-placeholder-png.png",
+        }}
+      />
+      {editMode ? (
         <View>
           <CustomInput
             defaultValue={user?.alias}
@@ -52,9 +57,9 @@ export default function UserScreen() {
             keyboardType={"default"}
             rules={{
               minLength: {
-              value: 3,
-              message: "Alias must be minimum 3 characters long",
-            }
+                value: 3,
+                message: "Alias must be minimum 3 characters long",
+              },
             }}
           />
           <CustomInput
@@ -82,44 +87,46 @@ export default function UserScreen() {
             defaultValue={user?.profilePictureUrl}
             placeholder='Profile picture url'
             name='profilePictureUrl'
-            value={user?.profilePictureUrl}
             keyboardType={"url"}
             control={control}
             rules={{
-                pattern: {value: IMGURL_REGEX, message: "Must be a valid url adress"}
+              pattern: { value: IMGURL_REGEX, message: "Must be a valid url adress" },
             }}
           />
-          <View style={{justifyContent: "center", marginLeft: "auto", marginRight: "auto"}}>
-            <CustomButton
-              text='Update profile'
-              onPress={handleSubmit(onSubmit)}
-            />
+          <View style={{ justifyContent: "center", marginLeft: "auto", marginRight: "auto" }}>
+            <CustomButton text='Update profile' onPress={handleSubmit(onSubmit)} />
             <CustomButton
               text='Discard changes'
-              bgColor="#c50f1f"
+              bgColor='#c50f1f'
               onPress={() => setEditMode(false)}
             />
           </View>
         </View>
-        :
+      ) : (
         <View>
           <Title>{user?.alias}</Title>
-          {user?.contactEmail && <Text variant="titleSmall">Email: {user?.email}</Text>}
-          {user?.phoneNr && <Text variant="titleSmall">Phone number: {user?.phoneNr}</Text>}
-          <Text variant="titleSmall">Email: legit@mail.se</Text>
+          {user?.contactEmail && <Text variant='titleSmall'>Email: {user?.email}</Text>}
+          {user?.phoneNr && <Text variant='titleSmall'>Phone number: {user?.phoneNr}</Text>}
+          <Text variant='titleSmall'>Email: legit@mail.se</Text>
         </View>
-        }
+      )}
 
-        <View style={styles.buttonContainer}>
-          {editMode ?
-            <Button mode="contained" buttonColor="#c50f1f" onPress={deleteAccount}>Delete account</Button>
-          :
-            <Button mode="contained" buttonColor="#d0a753" onPress={handleLogOut}>Logout</Button>
-          }
-          <Button mode="contained" onPress={() => setEditMode(prevState => !prevState)}>Edit profile</Button>
-        </View>
+      <View style={styles.buttonContainer}>
+        {editMode ? (
+          <Button mode='contained' buttonColor='#c50f1f' onPress={deleteAccount}>
+            Delete account
+          </Button>
+        ) : (
+          <Button mode='contained' buttonColor='#d0a753' onPress={handleLogOut}>
+            Logout
+          </Button>
+        )}
+        <Button mode='contained' onPress={() => setEditMode((prevState) => !prevState)}>
+          Edit profile
+        </Button>
+      </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -140,5 +147,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "80%",
     justifyContent: "space-between",
-  }
-})
+  },
+});
