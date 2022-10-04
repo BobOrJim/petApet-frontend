@@ -11,7 +11,7 @@ import { RootStackParamList } from "../NavigationContainerContainer";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Ios_extraKeyboardPadding from "../components/Ios_extraKeyboardPadding";
 
-export const IMGURL_REGEX = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png|jpeg)/g;
+export const IMGURL_REGEX = /^https?:\/\/(\w+\.)?imgur.com|imgur.io/;
 const NUMBER_REGEX = /^[0-9]*$/;
 const LETTER_REGEX = /^[A-Öa-ö\s]+$/;
 
@@ -142,12 +142,12 @@ export default function AddAdvertScreen({ navigation }: Props) {
 
           <CustomInput
             name='imageUrls'
-            placeholder='ImageUrls'
+            placeholder='IMGUR url'
             keyboardType={"url"}
             control={control}
             rules={{
-              required: "Url is required",
-              pattern: { value: IMGURL_REGEX, message: "Must be a valid url adress" },
+              required: "IMGUR url is required",
+              pattern: { value: IMGURL_REGEX, message: "Must be a valid IMGUR url adress" },
               maxLength: { value: 300, message: "Too long url" },
             }}
           />
