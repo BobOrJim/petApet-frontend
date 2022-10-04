@@ -32,7 +32,6 @@ export default function SignUpScreen({ navigation }: Props) {
     });
     if (result) {
       navigation.navigate("SignIn");
-      console.log(data);
     } else {
       alert("Something went wrong. Try again later.");
       return;

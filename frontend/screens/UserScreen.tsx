@@ -15,7 +15,6 @@ export default function UserScreen() {
   const { control, handleSubmit } = useForm<any>({});
 
   async function onSubmit(data: User) {
-    console.log(data);
     if (user) {
       const result = await updateUser({
         ...user,
