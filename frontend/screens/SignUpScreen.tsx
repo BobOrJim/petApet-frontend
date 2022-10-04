@@ -10,6 +10,7 @@ import { useUserContext } from "../contexts/UserContext";
 
 export const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const PWD_REGEX = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*.!@$%^&(){}[]:;<>,.?~_+-=|).{6,32}$/;
 type Props = NativeStackScreenProps<RootStackParamList>;
 
 export default function SignUpScreen({ navigation }: Props) {
@@ -33,9 +34,7 @@ export default function SignUpScreen({ navigation }: Props) {
       navigation.navigate("SignIn");
       console.log(data);
     } else {
-      alert(
-        "Password too weak. \nRequires a number.\nMinimum length: 6.\nOne lowcase char & one uppercase char.",
-      );
+      alert("Something went wrong. Try again later.");
       return;
     }
   };
@@ -67,8 +66,13 @@ export default function SignUpScreen({ navigation }: Props) {
           rules={{
             required: "Password is required",
             minLength: {
-              value: 8,
-              message: "Password should be minimum 8 characters long",
+              value: 6,
+              message: "Password should be minimum 6 characters long",
+            },
+            pattern: {
+              value: PWD_REGEX,
+              message:
+                "Password too weak. Requires: A number\nOne lower and one uppercase character.\nOne special character. Minimum length: 6.",
             },
           }}
         />
@@ -78,7 +82,7 @@ export default function SignUpScreen({ navigation }: Props) {
           control={control}
           secureTextEntry
           rules={{
-            required: "Must repeat password",
+            required: "Repeat password",
             validate: (value: any) => value === pwd || "Password not matching",
           }}
         />

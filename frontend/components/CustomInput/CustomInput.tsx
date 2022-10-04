@@ -1,7 +1,18 @@
 import React from "react";
-import { Controller } from "react-hook-form";
-import { StyleSheet, Text, View } from "react-native";
+import { Control, Controller, RegisterOptions } from "react-hook-form";
+import { KeyboardTypeOptions, StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
+
+interface Props {
+  control: Control;
+  name: string;
+  rules?: Partial<RegisterOptions>;
+  placeholder: string;
+  secureTextEntry?: boolean;
+  maxLength?: number;
+  keyboardType?: KeyboardTypeOptions;
+  defaultValue?: string;
+}
 
 const CustomInput = ({
   control,
@@ -12,7 +23,7 @@ const CustomInput = ({
   maxLength,
   keyboardType,
   defaultValue = "",
-}: any) => {
+}: Props) => {
   return (
     <Controller
       control={control}
