@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
 import AdvertListItem from "../components/AdvertComponents/AdvertListItem";
 import AdvertSearchfilters from "../components/AdvertComponents/AdvertSearchfilters";
@@ -19,14 +19,16 @@ export default function MainScreen({ navigation }: Props) {
   const [searchFilters, setSearchfilters] = useState<SearchParams>({ searchAll: "" });
   const { adverts, getAllAdverts } = useAdverts();
   const { user } = useUserContext();
+
+  useEffect(() => {
+    getAllAdverts();
+  }, [adverts]);
+
   return (
     <>
       <FlashList
         ListHeaderComponent={
-          <AdvertSearchfilters
-            searchFilters={searchFilters}
-            setSearchfilters={setSearchfilters}
-          />
+          <AdvertSearchfilters searchFilters={searchFilters} setSearchfilters={setSearchfilters} />
         }
         contentContainerStyle={{ paddingTop: 10 }}
         onRefresh={getAllAdverts}
@@ -45,15 +47,14 @@ export default function MainScreen({ navigation }: Props) {
         estimatedItemSize={100}
         renderItem={({ item }) => <AdvertListItem advert={item} navigation={navigation} />}
       />
-      {
-      user && 
+      {user && (
         <FAB
-          size="small"
-          icon="plus"
-          style={{ position: 'absolute', margin: 16, right: 0, bottom: 0 }}
+          size='small'
+          icon='plus'
+          style={{ position: "absolute", margin: 16, right: 0, bottom: 0 }}
           onPress={() => navigation.navigate("AddAdvert")}
         />
-      }
+      )}
     </>
   );
 }
