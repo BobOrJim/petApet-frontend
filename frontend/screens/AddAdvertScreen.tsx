@@ -26,21 +26,18 @@ export default function AddAdvertScreen({ navigation }: Props) {
   };
   React.useEffect(() => {
     return () => {
-      console.log("Unloading Sound");
       if (sound) {
         sound.unloadAsync();
       }
     };
   }, [sound]);
   async function playSound() {
-    console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync(require("../assets/dog_woof.mp3"));
     setSound(sound);
     await sound.playAsync();
   }
 
   const onAddAdvertPressed = (data: any) => {
-    console.log(data);
     addAdvert(data);
     alert("Advert added");
     navigation.navigate("Main");
