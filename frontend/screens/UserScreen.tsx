@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { View, Image, StyleSheet } from "react-native";
@@ -6,13 +7,15 @@ import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 import { User } from "../models/User";
+import { RootStackParamList } from "../NavigationContainerContainer";
 import { IMGURL_REGEX } from "./AddAdvertScreen";
 import { EMAIL_REGEX } from "./SignUpScreen";
 
-export default function UserScreen() {
+export default function UserScreen({ navigation } : NativeStackScreenProps<RootStackParamList>) {
   const { user, updateUser, DeleteLoggedInUser, LogOutUser } = useUserContext();
   const [editMode, setEditMode] = useState(false);
   const { control, handleSubmit } = useForm<any>({});
+  console.log(user);
 
   async function onSubmit(data: User) {
     if (user) {
@@ -22,16 +25,23 @@ export default function UserScreen() {
         profilePictureUrl: data.profilePictureUrl ? data.profilePictureUrl : user.profilePictureUrl,
         alias: data.alias ? data.alias : user.alias,
         contactEmail: data.contactEmail ? data.contactEmail : user.contactEmail,
-      });
+      })
+
+      if(result) {
+        alert("User updated!")
+        setEditMode(false)
+      }
     }
   }
 
   async function deleteAccount() {
     const result = await DeleteLoggedInUser();
+    navigation.navigate("Main");  
   }
 
   async function handleLogOut() {
     const result = await LogOutUser();
+    navigation.navigate("Main");  
   }
 
   return (
@@ -68,7 +78,6 @@ export default function UserScreen() {
             control={control}
             keyboardType={"numeric"}
             rules={{
-              required: "Phone number is required",
               pattern: { value: /^[+]?\d{8,12}$/, message: "Must be valid phone number" },
             }}
           />
@@ -104,9 +113,8 @@ export default function UserScreen() {
       ) : (
         <View>
           <Title>{user?.alias}</Title>
-          {user?.contactEmail && <Text variant='titleSmall'>Email: {user?.email}</Text>}
+          {user?.contactEmail && <Text variant='titleSmall'>Email: {user?.contactEmail}</Text>}
           {user?.phoneNr && <Text variant='titleSmall'>Phone number: {user?.phoneNr}</Text>}
-          <Text variant='titleSmall'>Email: legit@mail.se</Text>
         </View>
       )}
 

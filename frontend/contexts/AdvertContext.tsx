@@ -1,10 +1,11 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
+import { HttpRespons } from "../models/HttpTypes";
 import { useUserContext } from "./UserContext";
 
 interface ContextValue {
   adverts: Advert[];
-  getAllAdverts: () => void;
+  getAllAdverts: () => Promise<boolean>;
   getAdvertById: (id: string) => Promise<Advert>;
   addAdvert: (advert: AdvertDto) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
   removeAdvert: (id: string) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
@@ -53,11 +54,19 @@ export default function AdvertProvider({ children }: Props) {
     return false;
   }
 
-  function getAllAdverts() {
-    fetch(baseUrl + "Advert/GetAllAdverts")
-      .then((res) => res.json())
-      .then((data) => setAdverts(data))
-      .catch((err) => console.error(err));
+  async function getAllAdverts(): Promise<boolean> {
+    try {
+      const response = await fetch(baseUrl + "Advert/GetAllAdverts");
+      if(response.ok) {
+        setAdverts(await response.json())
+        return true
+      } else {
+        throw new Error(response.statusText);
+      }
+    } catch(err) {
+      console.log(err);
+      return false;
+    }
   }
 
   function getAdvertById(id: string): Promise<Advert> {

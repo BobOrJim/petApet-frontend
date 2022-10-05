@@ -35,7 +35,7 @@ export default function SignInScreen({ navigation }: Props) {
       navigation.navigate("Main");
       speak(data.username);
     } else {
-      alert("Username and password does not match.");
+      alert("Something went wrong");
       return;
     }
   };

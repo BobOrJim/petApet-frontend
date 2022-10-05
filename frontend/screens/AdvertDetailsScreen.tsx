@@ -85,7 +85,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
                 toggleVisibility();
               }}
             >
-              <Text>Kontakta ägaren</Text>
+              <Text>Contact owner</Text>
             </Button>
           )}
 

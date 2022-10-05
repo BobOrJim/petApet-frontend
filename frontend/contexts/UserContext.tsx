@@ -62,6 +62,7 @@ export default function UserProvider({ children }: Props) {
       userBuild.isLoggedIn = true;
       userBuild.profilePictureUrl = userInstance.profilePictureUrl;
       userBuild.email = userInstance.email;
+      userBuild.contactEmail = userInstance.contactEmail;
 
       setUser(userBuild);
       return true;
@@ -94,6 +95,7 @@ export default function UserProvider({ children }: Props) {
       try {
         const response = await PatchUser(userToUpdate, userToUpdate.token);
         if (response) {
+          setUser(response);
           return true;
         }
       } catch (error) {
@@ -238,8 +240,7 @@ const GetUserById = async (userId: string, token: string): Promise<HttpRespons |
   }
 };
 
-const PatchUser = async (user: User, token: string): Promise<boolean> => {
-  console.log(user);
+const PatchUser = async (user: User, token: string): Promise<User> => {
   try {
     const response = await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
       headers: {
@@ -248,7 +249,7 @@ const PatchUser = async (user: User, token: string): Promise<boolean> => {
       },
     });
     if (response.status > 199 && response.status < 300) {
-      return true;
+      return response.data;
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -257,7 +258,7 @@ const PatchUser = async (user: User, token: string): Promise<boolean> => {
       console.log("unexpected error: ", error);
     }
   }
-  return false;
+  return {} as User;
 };
 
 /*

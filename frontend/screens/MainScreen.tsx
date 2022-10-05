@@ -43,7 +43,7 @@ export default function MainScreen({ navigation }: Props) {
               return true;
             }
           }
-        })}
+        }).reverse()}
         estimatedItemSize={100}
         renderItem={({ item }) => <AdvertListItem advert={item} navigation={navigation} />}
       />
