@@ -1,26 +1,27 @@
-// @ts-nocheck
 import { createContext, Dispatch, ReactNode, useContext, useEffect, useState } from "react";
-import { MD3LightTheme as PaperDefaultTheme, MD3DarkTheme as PaperDarkTheme} from "react-native-paper"
-import { DefaultTheme as NavigationDefaultTheme, DarkTheme as NavigationDarkTheme, Theme } from "@react-navigation/native"
+import { MD3LightTheme as PaperDefaultTheme, MD3DarkTheme as PaperDarkTheme, MD3Theme as NavTheme} from "react-native-paper"
+import { DefaultTheme as NavigationDefaultTheme, DarkTheme as NavigationDarkTheme, Theme as PaperTheme} from "@react-navigation/native"
 import merge from "deepmerge";
 import useSecureStorage from "../hooks/useSecureStorage";
 
 interface ContextValue {
     currentTheme: Theme;
-    darkmode: boolean;
-    setDarkmode: Dispatch<React.SetStateAction<boolean>>
-    usingCustomTheme: boolean;
-    setUsingCustomTheme: Dispatch<React.SetStateAction<boolean>>
-    customColors: CustomColors;
-    setCustomColors: Dispatch<React.SetStateAction<CustomColors>>
+    darkmode: boolean | undefined;
+    setDarkmode: Dispatch<React.SetStateAction<boolean | undefined>>
+    usingCustomTheme: boolean | undefined;
+    setUsingCustomTheme: Dispatch<React.SetStateAction<boolean | undefined>>
+    customColors: CustomColors | undefined;
+    setCustomColors: Dispatch<React.SetStateAction<CustomColors | undefined>>
 }
 
 const ThemeContext = createContext<ContextValue>({} as ContextValue);
 
+type Theme = NavTheme & PaperTheme;
+
 interface CustomColors {
-  card: string;
-  background: string;
-  surface: string;
+  card?: string;
+  background?: string;
+  surface?: string;
 }
 
 interface Props {

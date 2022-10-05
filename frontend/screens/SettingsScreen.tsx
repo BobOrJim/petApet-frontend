@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { View, StyleSheet } from "react-native";
 import { Button, Card, Switch, Text } from "react-native-paper";
 import { useTheme } from "../contexts/ThemeContext";
@@ -63,7 +62,7 @@ export default function SettingsScreen() {
             noSnap={true}
             row={false}
             swatches={false}
-            color={customColors[focusedItem]}
+            color={customColors?.[focusedItem]}
             onColorChangeComplete={(color) =>
               setCustomColors((prevState) => ({ ...prevState, [focusedItem]: color }))
             }
