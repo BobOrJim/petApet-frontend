@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import {
   SignInDto,
   SignUpDto,
@@ -8,7 +8,6 @@ import {
   ContactDetails,
 } from "../models/User";
 import axios from "axios";
-//import { Advert } from "../models/Advert";
 import { HttpRespons } from "../models/HttpTypes";
 
 interface Props {
@@ -94,7 +93,7 @@ export default function UserProvider({ children }: Props) {
     if (userToUpdate) {
       try {
         const response = await PatchUser(userToUpdate, userToUpdate.token);
-        if(response) {
+        if (response) {
           return true;
         }
       } catch (error) {
@@ -127,15 +126,15 @@ export default function UserProvider({ children }: Props) {
   }
 
   async function DeleteLoggedInUser(): Promise<boolean> {
-    if(user) {
+    if (user) {
       try {
         const response = await fetch(baseUrl + "User/DeleteUserById/" + user.id, {
           method: "DELETE",
           headers: {
             Authorization: "Bearer " + user.token,
-          }
+          },
         });
-        if(response.ok) {
+        if (response.ok) {
           setUser(undefined);
           return true;
         } else {
@@ -147,22 +146,31 @@ export default function UserProvider({ children }: Props) {
       }
     }
     return false;
-    
   }
 
   async function LogOutUser(): Promise<boolean> {
-    if(user) {
-      const response = await updateUser({...user, isLoggedIn: false })
-      if(response) {
+    if (user) {
+      const response = await updateUser({ ...user, isLoggedIn: false });
+      if (response) {
         setUser(undefined);
-        return true
+        return true;
       }
     }
     return false;
   }
 
   return (
-    <UserContext.Provider value={{ signIn, signUp, updateUser, user, GetContactDetailsByUserId, DeleteLoggedInUser, LogOutUser }}>
+    <UserContext.Provider
+      value={{
+        signIn,
+        signUp,
+        updateUser,
+        user,
+        GetContactDetailsByUserId,
+        DeleteLoggedInUser,
+        LogOutUser,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
@@ -238,7 +246,7 @@ const PatchUser = async (user: User, token: string): Promise<boolean> => {
         Authorization: "Bearer " + token,
       },
     });
-    if(response.status > 199 && response.status < 300) {
+    if (response.status > 199 && response.status < 300) {
       return true;
     }
   } catch (error) {

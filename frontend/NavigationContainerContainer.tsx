@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
-import { Provider as PaperProvider, useTheme as getColors, Text } from "react-native-paper";
+import { Provider as PaperProvider, Text } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MainScreen from "./screens/MainScreen";
 import SignInScreen from "./screens/SignInScreen";
@@ -38,10 +38,12 @@ export default function NavigationContainerContainer() {
               name='Main'
               component={MainScreen}
               options={({ navigation }) => ({
-                title:"",
+                title: "",
                 headerLeft: () => (
                   <Pressable onPress={() => navigation.navigate(user ? "User" : "SignIn")}>
-                    <Text style={{ color: themeColor, fontWeight: "500" }}>{user ? user.alias : "Sign in"}</Text>
+                    <Text style={{ color: themeColor, fontWeight: "500" }}>
+                      {user ? user.alias : "Sign in"}
+                    </Text>
                   </Pressable>
                 ),
                 headerRight: (props) => (
@@ -53,8 +55,12 @@ export default function NavigationContainerContainer() {
                   />
                 ),
               })}
-            />        
-            <NativeStack.Screen name='User' component={UserScreen} options={({}) => ({title: user?.alias})}/>
+            />
+            <NativeStack.Screen
+              name='User'
+              component={UserScreen}
+              options={({}) => ({ title: user?.alias })}
+            />
             <NativeStack.Screen name='Settings' component={SettingsScreen} />
             <NativeStack.Screen name='SignIn' component={SignInScreen} />
             <NativeStack.Screen name='SignUp' component={SignUpScreen} />
@@ -64,7 +70,7 @@ export default function NavigationContainerContainer() {
               component={AdvertDetailsScreen}
               options={({ navigation }) => ({
                 animation: "slide_from_right",
-                title:"",
+                title: "",
                 headerLeft: () => (
                   <Ionicons
                     color={themeColor}
