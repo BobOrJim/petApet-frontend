@@ -1,5 +1,3 @@
-import { Advert } from "./Advert";
-
 export interface User {
   id: string; //from puppyDb Table User
   alias: string; //from puppyDb Table User
@@ -36,4 +34,4 @@ export type SignUpResponse = {
 export type ContactDetails = {
   email: string;
   phoneNr: string;
-}
+};

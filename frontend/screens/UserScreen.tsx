@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { View, Image, StyleSheet } from "react-native";
-import { Button, IconButton, Text, TextInput, Title } from "react-native-paper";
+import { Button, Text, Title } from "react-native-paper";
 import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";

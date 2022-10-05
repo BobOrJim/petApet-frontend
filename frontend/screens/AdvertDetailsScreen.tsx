@@ -1,16 +1,16 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, Image, View, BackHandler } from "react-native";
-import { Button } from "react-native-paper";
+import { Text, View, BackHandler } from "react-native";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
 import ContactUserButton from "../components/AdvertComponents/ContactUserButtons";
-import { Card, Title, Paragraph, IconButton } from "react-native-paper";
+import { Card, Title, Paragraph, IconButton, Button } from "react-native-paper";
 import { StyleSheet } from "react-native";
-type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 import StarRating from "../components/AdvertComponents/StarRating";
 import { useUserContext } from "../contexts/UserContext";
+
+type Props = NativeStackScreenProps<RootStackParamList, "AdvertDetails">;
 
 export default function AdvertDetailsScreen({ route, navigation }: Props) {
   const [advert, setAdvert] = useState<Advert>();
@@ -57,7 +57,6 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
           }
         }}
       >
-        
         <Card elevation={5} style={styles.centered}>
           <Card.Title
             title=''
@@ -80,16 +79,17 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
             <Paragraph>Race: {advert?.race}</Paragraph>
             <Paragraph>Sex: {advert?.sex}</Paragraph>
           </Card.Content>
-          {user &&
+          {user && (
             <Button
               onPress={() => {
                 toggleVisibility();
               }}
             >
               <Text>Kontakta ägaren</Text>
-            </Button>}
-            
-            {visibility && <ContactUserButton userId={advert?.userId}/>}
+            </Button>
+          )}
+
+          {visibility && <ContactUserButton userId={advert?.userId} />}
         </Card>
       </View>
     </>

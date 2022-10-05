@@ -7,13 +7,13 @@ import { useUserContext } from "../../contexts/UserContext";
 import { ContactDetails } from "../../models/User";
 
 interface Props {
-    userId: string | undefined;
+  userId: string | undefined;
 }
 
-export default function ContactUserButton({ userId } : Props) {
+export default function ContactUserButton({ userId }: Props) {
   const [isAvailable, setIsAvailable] = useState({ text: false, mail: false });
   const [contactDetails, setContactDetails] = useState<ContactDetails>({} as ContactDetails);
-  const {GetContactDetailsByUserId } = useUserContext();
+  const { GetContactDetailsByUserId } = useUserContext();
 
   useEffect(() => {
     SMS.isAvailableAsync().then((isAvailable) =>
@@ -23,10 +23,9 @@ export default function ContactUserButton({ userId } : Props) {
       setIsAvailable((prevState) => ({ ...prevState, mail: isAvailable })),
     );
 
-    if(userId) {
-      GetContactDetailsByUserId(userId).then(res => setContactDetails(res));
+    if (userId) {
+      GetContactDetailsByUserId(userId).then((res) => setContactDetails(res));
     }
-
   }, []);
 
   function openTextApp() {
@@ -42,16 +41,26 @@ export default function ContactUserButton({ userId } : Props) {
 
   return (
     <View style={styles.buttonContainer}>
-      {isAvailable.text && contactDetails.phoneNr && 
-        <Button style={styles.button} onPress={openTextApp} mode="contained-tonal" icon="exit-to-app" >
-            sms 
+      {isAvailable.text && contactDetails.phoneNr && (
+        <Button
+          style={styles.button}
+          onPress={openTextApp}
+          mode='contained-tonal'
+          icon='exit-to-app'
+        >
+          sms
         </Button>
-      }
-      {isAvailable.mail && contactDetails.email && 
-        <Button style={styles.button} onPress={openMailApp} mode="contained-tonal" icon="exit-to-app">
-            mail 
+      )}
+      {isAvailable.mail && contactDetails.email && (
+        <Button
+          style={styles.button}
+          onPress={openMailApp}
+          mode='contained-tonal'
+          icon='exit-to-app'
+        >
+          mail
         </Button>
-      }
+      )}
     </View>
   );
 }
@@ -59,7 +68,7 @@ export default function ContactUserButton({ userId } : Props) {
 const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
-    marginTop: 5
+    marginTop: 5,
   },
   button: {
     flexDirection: "row",
