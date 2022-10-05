@@ -62,7 +62,7 @@ export default function SettingsScreen() {
             noSnap={true}
             row={false}
             swatches={false}
-            color={customColors?.[focusedItem]}
+            color={customColors[focusedItem]}
             onColorChangeComplete={(color) =>
               setCustomColors((prevState) => ({ ...prevState, [focusedItem]: color }))
             }

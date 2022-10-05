@@ -6,12 +6,12 @@ import useSecureStorage from "../hooks/useSecureStorage";
 
 interface ContextValue {
     currentTheme: Theme;
-    darkmode: boolean | undefined;
-    setDarkmode: Dispatch<React.SetStateAction<boolean | undefined>>
-    usingCustomTheme: boolean | undefined;
-    setUsingCustomTheme: Dispatch<React.SetStateAction<boolean | undefined>>
-    customColors: CustomColors | undefined;
-    setCustomColors: Dispatch<React.SetStateAction<CustomColors | undefined>>
+    darkmode: boolean;
+    setDarkmode: Dispatch<React.SetStateAction<boolean>>
+    usingCustomTheme: boolean;
+    setUsingCustomTheme: Dispatch<React.SetStateAction<boolean>>
+    customColors: CustomColors;
+    setCustomColors: Dispatch<React.SetStateAction<CustomColors>>
 }
 
 const ThemeContext = createContext<ContextValue>({} as ContextValue);
@@ -33,9 +33,9 @@ export default function ThemeProvider({ children }: Props) {
     const [currentTheme, setCurrentTheme] = useState<Theme>(darkmode ? StandardDarkTheme : StandardLightTheme);
     const [usingCustomTheme, setUsingCustomTheme] = useSecureStorage("usingCustomTheme", false);
     const [customColors, setCustomColors] = useSecureStorage<CustomColors>("customColors", {
-      card: "#fff",
-      background: "#fff",
-      surface: "#fff"
+      card: darkmode ? "#000" :"#fff",
+      background: darkmode ? "#000" :"#fff",
+      surface: darkmode ? "#000" :"#fff"
     });
 
     useEffect(() => {
@@ -50,9 +50,7 @@ export default function ThemeProvider({ children }: Props) {
               ...prevState,
               colors: {
                   ...prevState.colors,
-                  background: customColors.background !== undefined ? customColors.background : prevState.colors.background,
-                  surface: customColors.surface !== undefined ? customColors.surface : prevState.colors.surface,
-                  card: customColors.card !== undefined ? customColors.card : prevState.colors.card
+                  ...customColors
               }
         }))
       }
