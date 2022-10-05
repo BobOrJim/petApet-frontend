@@ -239,6 +239,7 @@ const GetUserById = async (userId: string, token: string): Promise<HttpRespons |
 };
 
 const PatchUser = async (user: User, token: string): Promise<boolean> => {
+  console.log(user);
   try {
     const response = await axios.patch(baseUrl + "User/UpdateUser/" + user.id, user, {
       headers: {

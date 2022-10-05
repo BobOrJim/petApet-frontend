@@ -50,7 +50,7 @@ export default function UserScreen() {
         <View>
           <CustomInput
             defaultValue={user?.alias}
-            name='Alias'
+            name='alias'
             placeholder='Alias'
             control={control}
             keyboardType={"default"}
@@ -74,7 +74,7 @@ export default function UserScreen() {
           />
           <CustomInput
             defaultValue={user?.contactEmail}
-            name='email'
+            name='contactEmail'
             placeholder='Email'
             control={control}
             keyboardType={"default"}
