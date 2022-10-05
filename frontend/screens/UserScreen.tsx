@@ -50,7 +50,7 @@ export default function UserScreen({ navigation }: NativeStackScreenProps<RootSt
       <ScrollView
         contentContainerStyle={{
           ...styles.container,
-          justifyContent: editMode ? "space-between" : "space-evenly",
+          height: editMode ? 700 : "90%"
         }}
       >
         <Image
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: 20,
+    justifyContent: "space-between",
   },
   profilePicture: {
     height: 200,
