@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, BackHandler } from "react-native";
+import { Text, View, BackHandler, ScrollView } from "react-native";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
@@ -46,7 +46,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
 
   return (
     <>
-      <View
+      <ScrollView
         style={{ height: "100%" }}
         onTouchStart={(e) => (touchX.current = e.nativeEvent.pageX)}
         onTouchEnd={(e) => {
@@ -70,7 +70,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
               />
             )}
           />
-          <Card.Cover source={{ uri: advert?.imageUrls }} style={{height: 400}} />
+          <Card.Cover source={{ uri: advert?.imageUrls }} style={{ height: 400 }} />
           <Card.Content>
             <Title>{advert?.name}</Title>
             <Paragraph>Age: {advert?.age}</Paragraph>
@@ -91,7 +91,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
 
           {visibility && <ContactUserButton userId={advert?.userId} />}
         </Card>
-      </View>
+      </ScrollView>
     </>
   );
 }
