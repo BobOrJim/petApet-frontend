@@ -13,7 +13,7 @@ export default function AdvertSearchfilters({ setSearchfilters, searchFilters }:
     <View style={styles.container}>
       <TextInput
         value={searchFilters.searchAll}
-        placeholder='frisök'
+        placeholder='Search'
         onChangeText={(value) =>
           setSearchfilters((prevState) => ({ ...prevState, searchAll: value }))
         }

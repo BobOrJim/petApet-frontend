@@ -29,13 +29,13 @@ export default function ContactUserButton({ userId }: Props) {
   }, []);
 
   function openTextApp() {
-    SMS.sendSMSAsync(contactDetails.phoneNr, "Hejsan, ");
+    SMS.sendSMSAsync(contactDetails.phoneNr, "Hello, ");
   }
 
   function openMailApp() {
     Mail.composeAsync({
-      recipients: [contactDetails.email],
-      subject: "Hejsan",
+      recipients: [contactDetails.contactEmail],
+      subject: "Hello",
     });
   }
 
@@ -51,7 +51,7 @@ export default function ContactUserButton({ userId }: Props) {
           sms
         </Button>
       )}
-      {isAvailable.mail && contactDetails.email && (
+      {isAvailable.mail && contactDetails.contactEmail && (
         <Button
           style={styles.button}
           onPress={openMailApp}

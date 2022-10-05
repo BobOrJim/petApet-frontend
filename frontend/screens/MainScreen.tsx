@@ -31,6 +31,7 @@ export default function MainScreen({ navigation }: Props) {
           <AdvertSearchfilters searchFilters={searchFilters} setSearchfilters={setSearchfilters} />
         }
         contentContainerStyle={{ paddingTop: 10 }}
+        ListHeaderComponentStyle={{ paddingBottom: 15 }}
         onRefresh={getAllAdverts}
         refreshing={refreshing}
         data={adverts.filter((advert) => {
@@ -43,7 +44,7 @@ export default function MainScreen({ navigation }: Props) {
               return true;
             }
           }
-        })}
+        }).reverse()}
         estimatedItemSize={100}
         renderItem={({ item }) => <AdvertListItem advert={item} navigation={navigation} />}
       />
