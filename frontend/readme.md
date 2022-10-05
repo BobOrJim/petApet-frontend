@@ -53,4 +53,6 @@ genomförda krav.
 [^2]: Länk till figma : https://www.figma.com/file/kqFWTlEwVPlTb1Nszy35Ef/Daniel-Josefsson's-team-library?node-id=0%3A1
 
 
-[!image](https://i.postimg.cc/XNK2yzrb/prototyp.jpg)
+![Screenshot](prototyp.jpg)
+![Screenshot](alphaPrototyp.jpg)
+![Screenshot](flowPrototyp.jpg)
