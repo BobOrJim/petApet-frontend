@@ -70,7 +70,7 @@ export default function AdvertDetailsScreen({ route, navigation }: Props) {
               />
             )}
           />
-          <Card.Cover source={{ uri: advert?.imageUrls }} />
+          <Card.Cover source={{ uri: advert?.imageUrls }} style={{height: 400}} />
           <Card.Content>
             <Title>{advert?.name}</Title>
             <Paragraph>Age: {advert?.age}</Paragraph>
