@@ -76,10 +76,9 @@ export default function AdvertProvider({ children }: Props) {
   }
 
   async function removeAdvert(id: string): Promise<boolean> {
-    let response;
     if (user) {
       try {
-        response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
+        const response = await fetch(baseUrl + "Advert/DeleteAdvertById/" + id, {
           method: "DELETE",
           headers: {
             authorization: "Bearer " + user.token,
@@ -99,10 +98,9 @@ export default function AdvertProvider({ children }: Props) {
   }
 
   async function replaceAdvert(advert: Advert): Promise<boolean> {
-    let response;
     if (user) {
       try {
-        response = await fetch(baseUrl + "Advert/UpdateAdvert/" + advert.id, {
+        const response = await fetch(baseUrl + "Advert/UpdateAdvert/" + advert.id, {
           method: "PATCH",
           headers: {
             "content-type": "application/json",
@@ -126,8 +124,8 @@ export default function AdvertProvider({ children }: Props) {
 
   function getNextAdvert(id: string): string {
     const index = adverts.findIndex((a) => a.id === id);
-    if (adverts[index + 1]) {
-      return adverts[index + 1].id;
+    if (adverts[index - 1]) {
+      return adverts[index - 1].id;
     }
 
     return "";
