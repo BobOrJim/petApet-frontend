@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { useAdverts } from "./contexts/AdvertContext";
+import { useAdverts } from "../contexts/AdvertContext";
 import { View, Image } from "react-native";
 import { MD3Colors, ProgressBar } from "react-native-paper";
 
