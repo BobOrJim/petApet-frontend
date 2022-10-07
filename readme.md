@@ -51,6 +51,7 @@ genomförda krav.
 
 [^1]:Obs Azure har använts istället
 [^2]:Länk till figma : https://www.figma.com/file/kqFWTlEwVPlTb1Nszy35Ef/Daniel-Josefsson's-team-library?node-id=0%3A1
+[^3]:Länk till speglat Github Repo : https://github.com/TucoElgrande/petapet
 
 #### Använda react native komponenter :
 ```
