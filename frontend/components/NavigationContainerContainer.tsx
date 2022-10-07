@@ -3,17 +3,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Pressable } from "react-native";
 import { Provider as PaperProvider, Text } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import MainScreen from "./screens/MainScreen";
-import SignInScreen from "./screens/SignInScreen";
-import SignUpScreen from "./screens/SignUpScreen";
-import UserScreen from "./screens/UserScreen";
-import SettingsScreen from "./screens/SettingsScreen";
-import AdvertDetailsScreen from "./screens/AdvertDetailsScreen";
-import AddAdvertScreen from "./screens/AddAdvertScreen";
+import MainScreen from "../screens/MainScreen";
+import SignInScreen from "../screens/SignInScreen";
+import SignUpScreen from "../screens/SignUpScreen";
+import UserScreen from "../screens/UserScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import AdvertDetailsScreen from "../screens/AdvertDetailsScreen";
+import AddAdvertScreen from "../screens/AddAdvertScreen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { useTheme } from "./contexts/ThemeContext";
-import { useUserContext } from "./contexts/UserContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useUserContext } from "../contexts/UserContext";
 import SplashScreenWrapper from "./SplashScreenWrapper";
 
 export type RootStackParamList = {

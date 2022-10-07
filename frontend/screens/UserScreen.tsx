@@ -7,7 +7,7 @@ import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
 import { User } from "../models/User";
-import { RootStackParamList } from "../NavigationContainerContainer";
+import { RootStackParamList } from "../components/NavigationContainerContainer";
 import { IMGURL_REGEX } from "./AddAdvertScreen";
 import { EMAIL_REGEX } from "./SignUpScreen";
 import Ios_extraKeyboardPadding from "../components/Ios_extraKeyboardPadding";

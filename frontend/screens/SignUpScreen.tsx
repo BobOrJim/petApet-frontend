@@ -4,7 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { RootStackParamList } from "../NavigationContainerContainer";
+import { RootStackParamList } from "../components/NavigationContainerContainer";
 import CustomButton from "../components/CustomButton/CustomButton";
 import CustomInput from "../components/CustomInput/CustomInput";
 import { useUserContext } from "../contexts/UserContext";
