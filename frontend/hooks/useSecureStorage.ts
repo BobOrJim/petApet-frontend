@@ -19,7 +19,7 @@ export default function useSecureStorage<T>(key: string, initialState: T) {
   async function initilizeState() {
     const result = await SecureStore.getItemAsync(key);
     if (result) {
-      await setValue(JSON.parse(result));
+      setValue(JSON.parse(result));
     } else if (initialState) {
       setValue(initialState);
     }

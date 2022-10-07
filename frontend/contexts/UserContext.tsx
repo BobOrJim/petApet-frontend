@@ -36,19 +36,18 @@ export default function UserProvider({ children }: Props) {
       if (httpRespons_PostSignIn == null || httpRespons_PostSignIn.status != 200) {
         throw new Error("Httprequest to get token failed");
       }
-
-      //Login sussessfull. Try to build User entity.
+   
       const userBuild: User = {} as User;
-      //Step 1/3. Build props from the login data (User input)
+      
       const tokenInstance: TokenType = JSON.parse(JSON.stringify(httpRespons_PostSignIn.data));
       userBuild.username = signInDto.username;
       userBuild.password = signInDto.password;
-      //Step 2/3. Build props from the token (generated in AuthController)
+      
       userBuild.token = tokenInstance.token;
       userBuild.expiration = tokenInstance.expiration;
       userBuild.authId = tokenInstance.authUserId;
       userBuild.id = tokenInstance.userId;
-      //Step 3/3. Build props from UserController (from puppyDb, User table)
+      
       const httpRespons_GetUserById: HttpRespons | null = await GetUserById(
         userBuild.id,
         userBuild.token,
@@ -260,85 +259,3 @@ const PatchUser = async (user: User, token: string): Promise<User> => {
   }
   return {} as User;
 };
-
-/*
-const PostAdvert = async (advert: Advert, token: string): Promise<any> => {
-  try {
-    const { data, status } = await axios.post(baseUrl + "AddAdvert", advert, {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    return [data, status];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error : ", error.message);
-      return null;
-    } else {
-      console.log("unexpected error: ", error);
-      return null;
-    }
-  }
-};
-
-const PutAdvert = async (advert: Advert, token: string): Promise<any> => {
-  try {
-    const { data, status } = await axios.put(baseUrl + "UpdateAdvert/" + advert.id, advert, {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    return [data, status];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error : ", error.message);
-      return null;
-    } else {
-      console.log("unexpected error: ", error);
-      return null;
-    }
-  }
-};
-
-const DeleteAdvert = async (advertId: string, token: string): Promise<any> => {
-  try {
-    const { data, status } = await axios.delete(baseUrl + "DeleteAdvert/" + advertId, {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    return [data, status];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error : ", error.message);
-      return null;
-    } else {
-      console.log("unexpected error: ", error);
-      return null;
-    }
-  }
-};
-
-const GetAdvertsByUserId = async (userId: string, token: string): Promise<any> => {
-  try {
-    const { data, status } = await axios.get(baseUrl + "Advert/GetAdvertsByUserId/" + userId, {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + token,
-      },
-    });
-    return [data, status];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log("Axios error : ", error.message);
-      return null;
-    } else {
-      console.log("unexpected error: ", error);
-      return null;
-    }
-  }
-};
-*/

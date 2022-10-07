@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, BackHandler, ScrollView } from "react-native";
+import { Text, BackHandler, ScrollView } from "react-native";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
@@ -105,41 +105,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-/*
-  Orginal nedan: 
-
-  return (
-    <View
-      style={{ height: "100%" }}
-      onTouchStart={(e) => (touchX.current = e.nativeEvent.pageX)}
-      onTouchEnd={(e) => {
-        if (touchX.current - e.nativeEvent.pageX > 20) {
-          nextAdvert();
-        } else if (e.nativeEvent.pageX - touchX.current > 20) {
-          navigation.goBack();
-        }
-      }}
-    >
-      <Image source={{ uri: advert?.imageUrls }} style={{ height: 100, width: 100 }} />
-      <Text>Age: {advert?.age}</Text>
-      <Text>RentPeriod: {advert?.rentPeriod}</Text>
-      <Text>Name: {advert?.name}</Text>
-      <Text>Personality: {advert?.personallity}</Text>
-      <Text>Race: {advert?.race}</Text>
-      <Text>Id: {advert?.id}</Text>
-      <Text>Sex: {advert?.sex}</Text>
-      <Button
-        onPress={() => {
-          toggleVisibility();
-        }}
-      >
-        <Text>Kontakta ägaren</Text>
-      </Button>
-      {visibility && <ContactUserButton />}
-
-    </View>
-  );
-}
-
-*/

@@ -1,24 +1,22 @@
 export interface User {
-  id: string; //from puppyDb Table User
-  alias: string; //from puppyDb Table User
-  phoneNr: string; //from puppyDb Table User
-  //adverts: Advert[]; //from puppyDb Table Advert (is build in UserContext using the PK-FK relation in backend)
-  isLoggedIn: boolean; //from puppyDb Table User. Streachgoal ish
-  profilePictureUrl: string; //from puppyDb Table User
-  contactEmail: string; //from puppyDb Table User
-  authId: string; //from identityDb
-  username: string; //from identityDb
-  email: string; //from identityDb
-  password: string; //from identityDb
-  token: string; //generated in backend
-  expiration: Date; //generated in backend
+  id: string;
+  alias: string;
+  phoneNr: string;
+  isLoggedIn: boolean;
+  profilePictureUrl: string;
+  contactEmail: string;
+  authId: string; 
+  username: string;
+  email: string;
+  password: string;
+  token: string;
+  expiration: Date;
 }
 
-//export interface UserDto extends Omit<User, "id" | "authId" | "username" | "email" | "password"> {}
 export interface SignInDto extends Pick<User, "username" | "password"> {}
 export interface SignUpDto extends Pick<User, "username" | "password" | "email"> {}
 
-//SignInResponse
+
 export type TokenType = {
   token: string;
   expiration: Date;
