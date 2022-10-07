@@ -37,12 +37,20 @@ export default function UserScreen({ navigation }: NativeStackScreenProps<RootSt
 
   async function deleteAccount() {
     const result = await DeleteLoggedInUser();
-    navigation.navigate("Main");
+    if(result) {
+      navigation.navigate("Main");
+    } else {
+      alert("something went wrong")
+    }
   }
 
   async function handleLogOut() {
     const result = await LogOutUser();
-    navigation.navigate("Main");
+    if(result) {
+      navigation.navigate("Main");
+    } else {
+      alert("something went wrong")
+    }
   }
 
   return (
