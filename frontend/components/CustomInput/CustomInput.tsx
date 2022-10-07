@@ -1,7 +1,7 @@
 import React from "react";
 import { Control, Controller, RegisterOptions } from "react-hook-form";
-import { KeyboardTypeOptions, StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-paper";
+import { KeyboardTypeOptions, StyleSheet, View } from "react-native";
+import { TextInput, Text } from "react-native-paper";
 
 interface Props {
   control: Control;
