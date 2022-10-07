@@ -1,6 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { Advert, AdvertDto } from "../models/Advert";
-import { HttpRespons } from "../models/HttpTypes";
 import { useUserContext } from "./UserContext";
 
 interface ContextValue {

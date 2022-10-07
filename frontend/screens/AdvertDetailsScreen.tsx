@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, BackHandler, ScrollView } from "react-native";
+import { Text, BackHandler, ScrollView } from "react-native";
 import { RootStackParamList } from "../NavigationContainerContainer";
 import { useAdverts } from "../contexts/AdvertContext";
 import { Advert } from "../models/Advert";
