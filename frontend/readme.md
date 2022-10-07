@@ -33,7 +33,7 @@ komponenter.
 [x] - De utvalda komponenterna ska antecknas i er README tillsammans med en lista över
 genomförda krav.
 
-[x] - Git & GitHub har använts[^1]
+[x] - Git & GitHub har använts [^1]
 
 [x] - Projektmappen innehåller en README.md fil - (läs ovan för mer info)
 
@@ -47,10 +47,10 @@ genomförda krav.
 
 [x] - Ytterligare en valfri extern modul används i projektet.
 
-[x] - Prototyper för applikation tas fram innan den implementeras. Bilder på prototypenskall finnas i projektet vid inlämning.[^2]
+[x] - Prototyper för applikation tas fram innan den implementeras. Bilder på prototypenskall finnas i projektet vid inlämning. [^2]
 
-[^1]: Obs Azure har använts istället
-[^2]: Länk till figma : https://www.figma.com/file/kqFWTlEwVPlTb1Nszy35Ef/Daniel-Josefsson's-team-library?node-id=0%3A1
+[^1]:Obs Azure har använts istället
+[^2]:Länk till figma : https://www.figma.com/file/kqFWTlEwVPlTb1Nszy35Ef/Daniel-Josefsson's-team-library?node-id=0%3A1
 
 #### Använda react native komponenter :
 ```
