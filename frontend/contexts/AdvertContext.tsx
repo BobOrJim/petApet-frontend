@@ -6,9 +6,9 @@ interface ContextValue {
   adverts: Advert[];
   getAllAdverts: () => Promise<boolean>;
   getAdvertById: (id: string) => Promise<Advert>;
-  addAdvert: (advert: AdvertDto) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
-  removeAdvert: (id: string) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
-  replaceAdvert: (advert: Advert) => Promise<boolean>; // boolean på dessa? kommer dock bli ett promise
+  addAdvert: (advert: AdvertDto) => Promise<boolean>;
+  removeAdvert: (id: string) => Promise<boolean>;
+  replaceAdvert: (advert: Advert) => Promise<boolean>;
   getNextAdvert: (id: string) => string;
 }
 
@@ -21,7 +21,7 @@ interface Props {
 export default function AdvertProvider({ children }: Props) {
   const [adverts, setAdverts] = useState<Advert[]>([]);
   const { user } = useUserContext();
-  // Ska senare ligga i någon config fil
+
   const baseUrl = "https://puppy-backend.azurewebsites.net/api/V01/";
 
   useEffect(() => {
